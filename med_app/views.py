@@ -6,8 +6,8 @@ from .models import *
 
 
 class UserApiView(APIView):
-    def get(self):
-        data = User.objects.all().values()
+    def get(self, request):
+        data = User.objects.all()
         return Response({"Users": UserSerializer(data, many=True).data})
 
     def post(self, request):
@@ -19,13 +19,13 @@ class UserApiView(APIView):
 
 
 class DoctorApiView(APIView):
-    def get(self):
-        data = Doctor.objects.all().values()
+    def get(self, request):
+        data = Doctor.objects.all()
         return Response({"Doctors": DoctorSerializer(data, many=True).data})
 
 
 class PatientApiView(APIView):
-    def get(self):
+    def get(self, request):
         data = Patient.objects.all().values()
         return Response({"Patient": PatientSerializer(data, many=True).data})
 
