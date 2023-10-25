@@ -8,32 +8,30 @@ class UserSerializer(ModelSerializer):
         fields = ("user_id", "username", "is_doctor")
 
 
-class ServiceSerializer(ModelSerializer):
+class DateSerializer(ModelSerializer):
 
     class Meta:
-        model = Doctor
-        fields = '__all__'
+        model = Date
+        fields = ('work_time',)
 
 
 class DoctorSerializer(ModelSerializer):
+
     class Meta:
         model = Doctor
         fields = '__all__'
 
-    # def get_children(self, obj):
-    #     # print(obj.date_set.all())
-    #     i = ServiceSerializer(data=obj.date_set.all(), many=True)
-    #     print(i)
-    #     i.is_valid()
-    #
-    #     return i.data
-    #
-    # def to_representation(self, instance):
-    #     ret = super().to_representation(instance)
-    #
-    #     if self.get_children(instance):
-    #         ret['children'] = self.get_children(instance)
-    #     return ret
+    @staticmethod
+    def get_doctor_date(obj):
+        i = DateSerializer(data=obj.date_set.all(), many=True)
+
+        i.is_valid()
+        return i.data
+
+    def to_representation(self, instance):
+        redata = super().to_representation(instance)
+        redata['work_time'] = [item['work_time'] for item in self.get_doctor_date(instance)]
+        return redata
 
 
 class PatientSerializer(ModelSerializer):

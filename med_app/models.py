@@ -14,8 +14,9 @@ class User(models.Model):
 
 
 class Doctor(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     full_name = models.CharField(max_length=500)
+    avatar = models.ImageField(upload_to='doctor_avatar/')
     direction = models.CharField(max_length=255)
     price = models.FloatField(default=0)
     experience = models.TextField()
