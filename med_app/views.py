@@ -11,7 +11,7 @@ class UserApiView(APIView):
         return Response({"Users": UserSerializer(data, many=True).data})
 
     def post(self, request):
-        new_user = User.objects.create(
+        new_user = User.objects.update_or_create(
             user_id=request.data["user_id"],
             username=request.data["username"]
         )
@@ -30,7 +30,7 @@ class PatientApiView(APIView):
         return Response({"Patient": PatientSerializer(data, many=True).data})
 
     def post(self, request):
-        new_patient = Patient.objects.create(
+        new_patient = Patient.objects.update_or_create(
             user=request.data["user"],
             full_name=request.data["fullname"],
             phone_number=request.data["phone_number"],
