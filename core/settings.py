@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'med_app',
+    'drf_yasg',
     'rest_framework',
 ]
 
@@ -137,3 +138,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+JAZZMIN_SETTINGS = {
+    "custom_css": "css/admin_style.css",
+    "custom_js": "js/admin_copy_btn.js",
+}

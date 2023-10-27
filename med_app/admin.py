@@ -16,6 +16,7 @@ class UserAdmin(admin.ModelAdmin):
 class DoctorAdmin(admin.ModelAdmin):
     list_display = ["user", "full_name"]
     list_display_links = ["user", "full_name"]
+    readonly_fields = ['activate_url']
 
     inlines = [DateInline]
 

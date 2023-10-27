@@ -1,5 +1,6 @@
 from aiogram import executor
 
+from bot.handlers.users.user_handlers import register_user_handlers_py
 from bot.loader import dp
 import middlewares, filters, handlers
 from utils.notify_admins import on_startup_notify
@@ -12,6 +13,8 @@ async def on_startup(dispatcher):
 
     # Birlamchi komandalar (/star va /help)
     await set_default_commands(dispatcher)
+
+    register_user_handlers_py(dispatcher)
 
 
 if __name__ == '__main__':

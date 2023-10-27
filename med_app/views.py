@@ -15,7 +15,7 @@ class UserApiView(APIView):
             user_id=request.data["user_id"],
             username=request.data["username"]
         )
-        return Response({"post": model_to_dict(new_user)})
+        return Response({"post": model_to_dict(new_user[0])})
 
 
 class DoctorApiView(APIView):

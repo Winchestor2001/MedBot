@@ -1,3 +1,10 @@
-# MedBot
+# Med Web Application
 
-soon..
+## Api documentation:
+```
+/swagger
+```
+
+```
+/redoc
+```

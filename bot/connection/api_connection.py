@@ -1,9 +1,10 @@
 import aiohttp
 import json
+from bot.data.config import API_URL
 
 
 async def add_user(user_id, username=None):
-    url = "http://127.0.0.1:8000/api/v1/user/"
+    url = API_URL + "/api/v1/user/"
     payload = {
         "user_id": user_id,
         "username": username,
@@ -17,7 +18,7 @@ async def add_user(user_id, username=None):
 
 
 async def get_users():
-    url = "http://127.0.0.1:8000/api/v1/user/"
+    url = API_URL + "/api/v1/user/"
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:

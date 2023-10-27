@@ -1,6 +1,8 @@
 import datetime
 
 from django.db import models
+from uuid import uuid4
+from bot.data.config import BOT_URL
 
 
 class User(models.Model):
@@ -23,10 +25,14 @@ class Doctor(models.Model):
     services = models.TextField()
     reviews = models.IntegerField(default=0)
     busy = models.BooleanField(default=False)
-    activate_code = models.IntegerField()
+    activate_url = models.CharField(max_length=100, default='null')
 
     def __str__(self):
         return self.full_name
+
+    def save(self, **kwargs):
+        self.activate_url = BOT_URL + "?start=" + uuid4().hex[:8]
+        return super().save(**kwargs)
 
 
 class Date(models.Model):
