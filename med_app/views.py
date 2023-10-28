@@ -39,3 +39,16 @@ class PatientApiView(APIView):
             confirance_date=request.data["confirence_date"]
         )
         return Response({"New Patient": model_to_dict(new_patient)})
+
+
+class PatientResultApiView(APIView):
+    def get(self, request):
+        user = request.data["user"],
+        patient = Patient.objects.get(user__user_id=user)
+        patient_results = PatientResult.objects.filter(patient=patient)
+
+        serializer = PatientResultSerializer(data=patient_results, many=True)
+        serializer.is_valid()
+        return Response({'data': serializer.data})
+
+

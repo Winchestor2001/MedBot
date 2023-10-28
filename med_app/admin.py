@@ -24,3 +24,8 @@ class DoctorAdmin(admin.ModelAdmin):
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
     list_display = ["user", "full_name"]
+
+
+@admin.register(PatientResult)
+class PatientResultAdmin(admin.ModelAdmin):
+    list_display = ["user", "doctor"]

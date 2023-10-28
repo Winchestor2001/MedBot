@@ -55,3 +55,13 @@ class Patient(models.Model):
         return self.full_name
 
 
+class PatientResult(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    result_text = models.TextField()
+
+    def __str__(self):
+        return self.patient
+
+
+
