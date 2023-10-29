@@ -1,5 +1,3 @@
-import logging
-
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters.builtin import CommandStart
 from bot.data.config import ADMINS
@@ -13,7 +11,8 @@ async def bot_start(message: types.Message):
         user_id=message.from_user.id,
         username=message.from_user.username
     )
-    await message.answer(f"Привет 👋, {message.from_user.full_name}!")
+    msg = f"Добро пожаловать 👋, {message.from_user.full_name}!\n\n"
+    await message.answer(msg)
 
 
 def register_user_handlers_py(dp: Dispatcher):

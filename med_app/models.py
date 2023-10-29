@@ -61,7 +61,7 @@ class PatientResult(models.Model):
     result_text = models.TextField()
 
     def __str__(self):
-        return self.patient
+        return str(self.patient)
 
 
 

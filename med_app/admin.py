@@ -28,4 +28,4 @@ class PatientAdmin(admin.ModelAdmin):
 
 @admin.register(PatientResult)
 class PatientResultAdmin(admin.ModelAdmin):
-    list_display = ["user", "doctor"]
+    list_display = ["patient", "doctor"]
