@@ -38,3 +38,9 @@ class PatientSerializer(ModelSerializer):
     class Meta:
         model = Patient
         fields = "__all__"
+
+
+class PatientResultSerializer(ModelSerializer):
+    class Meta:
+        model = PatientResult
+        fields = "__all__"

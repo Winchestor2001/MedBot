@@ -26,7 +26,7 @@ class DoctorApiView(APIView):
 
 class PatientApiView(APIView):
     def get(self, request):
-        data = Patient.objects.all().values()
+        data = Patient.objects.all()
         return Response({"Patient": PatientSerializer(data, many=True).data})
 
     def post(self, request):
@@ -39,3 +39,16 @@ class PatientApiView(APIView):
             confirance_date=request.data["confirence_date"]
         )
         return Response({"New Patient": model_to_dict(new_patient)})
+
+
+class PatientResultApiView(APIView):
+    def post(self, request):
+        user = request.data["user"],
+        patient = Patient.objects.get(user__user_id=user)
+        patient_results = PatientResult.objects.filter(patient=patient)
+
+        serializer = PatientResultSerializer(data=patient_results, many=True)
+        serializer.is_valid()
+        return Response({'data': serializer.data})
+
+
