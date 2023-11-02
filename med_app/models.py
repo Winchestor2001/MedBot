@@ -46,7 +46,7 @@ class Date(models.Model):
 class Patient(models.Model):
     CONFIRANCE_STASTUS = (
         ('wait', 'wait'),
-        ('end', 'end'),
+        ('close', 'close'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=500)

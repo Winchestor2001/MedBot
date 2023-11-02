@@ -12,17 +12,34 @@ class UserApiView(APIView):
         return Response({"Users": UserSerializer(data, many=True).data})
 
     def post(self, request):
-        new_user = User.objects.update_or_create(
+        new_user = User.objects.get_or_create(
             user_id=request.data["user_id"],
             username=request.data["username"]
         )
-        return Response({"post": model_to_dict(new_user[0])})
+        return Response({"post": model_to_dict(new_user)})
 
 
 class DoctorApiView(APIView):
     def get(self, request):
         data = Doctor.objects.all()
         return Response({"Doctors": DoctorSerializer(data, many=True).data})
+
+    def post(self, request):
+        user_id = request.data["user_id"]
+        username = request.data["username"]
+        activate_code = request.data["activate_code"]
+        doctor = Doctor.objects.filter(activate_code__contains=activate_code).exists()
+        if doctor:
+            is_doc = True
+        else:
+            is_doc = False
+
+        new_user = User.objects.get_or_create(
+            user_id=user_id,
+            username=username,
+            is_doctor=is_doc,
+        )
+        return Response({"post": model_to_dict(new_user)})
 
 
 class PatientApiView(APIView):
@@ -46,10 +63,8 @@ class PatientApiView(APIView):
 class PatientResultApiView(APIView):
     def get(self, request):
         user = request.data["user"]
-        patient = Patient.objects.get(user__user_id=user)
-        patient_results = PatientResult.objects.filter(patient=patient)
-
-        serializer = PatientResultSerializer(data=patient_results, many=True)
+        patient = Patient.objects.filter(user__user_id=user)
+        serializer = PatientResultSerializer(data=patient, many=True)
         serializer.is_valid()
         return Response({'data': serializer.data})
 
