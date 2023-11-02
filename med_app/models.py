@@ -44,12 +44,17 @@ class Date(models.Model):
 
 
 class Patient(models.Model):
+    CONFIRANCE_STASTUS = (
+        ('wait', 'wait'),
+        ('end', 'end'),
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=500)
     phone_number = models.CharField(max_length=255)
     additional_information = models.TextField(null=True)
-    doctor = models.ManyToManyField(Doctor)
-    confirance_date = models.DateTimeField(default=datetime.datetime.now())
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
+    confirance_date = models.DateTimeField(default=None)
+    confirance_stastus = models.CharField(max_length=20, choices=CONFIRANCE_STASTUS, default='wait')
 
     def __str__(self):
         return self.full_name
