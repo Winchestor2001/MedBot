@@ -16,7 +16,7 @@ class UserApiView(APIView):
             user_id=request.data["user_id"],
             username=request.data["username"]
         )
-        return Response({"post": model_to_dict(new_user)})
+        return Response({"post": model_to_dict(new_user[0])})
 
 
 class DoctorApiView(APIView):
@@ -28,7 +28,7 @@ class DoctorApiView(APIView):
         user_id = request.data["user_id"]
         username = request.data["username"]
         activate_code = request.data["activate_code"]
-        doctor = Doctor.objects.filter(activate_code__contains=activate_code).exists()
+        doctor = Doctor.objects.filter(activate_url__contains=activate_code).exists()
         if doctor:
             is_doc = True
         else:
@@ -39,7 +39,7 @@ class DoctorApiView(APIView):
             username=username,
             is_doctor=is_doc,
         )
-        return Response({"post": model_to_dict(new_user)})
+        return Response({"user": model_to_dict(new_user[0])})
 
 
 class PatientApiView(APIView):
@@ -63,10 +63,10 @@ class PatientApiView(APIView):
 class PatientResultApiView(APIView):
     def get(self, request):
         user = request.data["user"]
-        patient = Patient.objects.filter(user__user_id=user)
+        patient = PatientResult.objects.filter(patient__user__user_id=user)
         serializer = PatientResultSerializer(data=patient, many=True)
         serializer.is_valid()
-        return Response({'data': serializer.data})
+        return Response({'patient_results': serializer.data})
 
     def post(self, request):
         patient = Patient.objects.get(id=request.data["patient"])
