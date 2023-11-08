@@ -4,7 +4,7 @@ from bot.utils.misc.change_format_date import change_format_date
 
 async def get_bookings_btn(dicts):
     keyboard = InlineKeyboardMarkup(row_width=1)
-    for i in dicts["Patient"]:
+    for i in dicts["patient"]:
         date = i["confirance_date"]
         doctor_name = i["doctor"]["full_name"]
         patient_id = i["id"]
@@ -12,7 +12,7 @@ async def get_bookings_btn(dicts):
         btn = InlineKeyboardButton(text=f"👨‍⚕️{changed_date} - {doctor_name}",
                                    callback_data=f"patient:{patient_id}")
         keyboard.add(btn)
-    exit_btn = InlineKeyboardButton(text="Выход", callback_data="patient:exit")
+    exit_btn = InlineKeyboardButton(text="Закрыть", callback_data="patient:exit")
     keyboard.add(exit_btn)
     return keyboard
 

@@ -7,26 +7,24 @@ from bot.keyboards.inline.bookings import get_bookings_btn, back_btn
 from bot.connection.api_connection import *
 from bot.handlers.users.user_handlers import bot_start
 
-
 # profile functions
 from bot.utils.misc.change_format_date import detail_date
 
 
 @dp.callback_query_handler(text_contains=["profile:"])
 async def profile(call: types.CallbackQuery, state: FSMContext):
-    await call.answer(cache_time=30)
     # await call.message.delete()
     user_id = call.from_user.id
     if call.data == "profile:my_booking":
         booking = await get_my_booking(user_id)
-        if len(booking["Patient"]) > 0:
+        if booking and booking.get("patient", False):
             await state.update_data({
-                "data": booking["Patient"]
+                "data": booking["patient"]
             })
             btn = await get_bookings_btn(booking)
             await call.message.edit_text("Вот ваши заказы", reply_markup=btn)
         else:
-            await call.message.edit_text(text="У вас нет заказа", reply_markup=main_keyboard)
+            await call.answer(text="У вас нет заказа", show_alert=True)
 
     elif call.data == "profile:my_result":
         pass
@@ -50,9 +48,9 @@ async def detail_booking(call: types.CallbackQuery, state: FSMContext):
     elif patient_id == "back":
         # await call.message.delete()
         booking = await get_my_booking(call.from_user.id)
-        if len(booking["Patient"]) > 0:
+        if len(booking["patient"]) > 0:
             await state.update_data({
-                "data": booking["Patient"]
+                "data": booking["patient"]
             })
             btn = await get_bookings_btn(booking)
             await call.message.answer("Вот ваши заказы", reply_markup=btn)
@@ -60,7 +58,6 @@ async def detail_booking(call: types.CallbackQuery, state: FSMContext):
         # await call.message.delete()
         msg = f"Добро пожаловать 👋, {call.from_user.full_name}!\n\n"
         await call.message.answer(msg, reply_markup=main_keyboard)
-
 
 # def register_user_handlers_py(dp: Dispatcher):
 #     dp.register_callback_query_handler(profile, text_contains="profile:")

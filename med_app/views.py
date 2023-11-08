@@ -16,11 +16,16 @@ class UserApiView(APIView):
         return Response({"users": UserSerializer(data, many=True).data})
 
     def post(self, request):
-        new_user = User.objects.get_or_create(
-            user_id=request.data["user_id"],
-            username=request.data["username"]
+        serializer = UserSerializer(
+            data={
+                "user_id": request.data["user_id"],
+                "username": request.data["username"],
+            }
         )
-        return Response({"user": model_to_dict(new_user[0])})
+        if serializer.is_valid():
+            return Response({"user": serializer.data}, status=201)
+        else:
+            return Response({"user": "Alredy created"}, status=200)
 
 
 class DoctorApiView(APIView):
@@ -63,7 +68,8 @@ class PatientApiView(APIView):
     def get(self, request):
         user = User.objects.get(user_id=request.data["user"])
         data = Patient.objects.filter(user=user)
-        return Response({"patient": PatientSerializer(data, many=True).data})
+        serializer = PatientSerializer(data, many=True)
+        return Response({"patient": serializer.data})
 
     def post(self, request):
         new_patient = Patient.objects.create(

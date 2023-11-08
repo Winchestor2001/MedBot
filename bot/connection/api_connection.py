@@ -52,4 +52,4 @@ async def get_my_booking(user):
             if response.status == 200:
                 return await response.json()
             else:
-                return "ERROR IN PATIENT"
+                return False
