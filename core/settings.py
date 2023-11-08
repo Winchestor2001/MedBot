@@ -34,8 +34,8 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
 
     'med_app',
-    'drf_yasg',
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
