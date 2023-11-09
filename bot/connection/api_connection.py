@@ -53,3 +53,16 @@ async def get_my_booking(user):
                 return await response.json()
             else:
                 return False
+
+
+async def get_my_result(user):
+    url = API_URL + "/api/v1/patient_result"
+    payload = {
+        "user": user
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=payload) as response:
+            if response.status == 200:
+                return await response.json()
+            else:
+                return False

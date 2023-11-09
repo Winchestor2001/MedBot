@@ -27,5 +27,5 @@ async def bot_start(message: types.Message):
         await message.answer(msg, reply_markup=main_keyboard)
 
 
-def register_user_handlers_py(disp: Dispatcher):
-    disp.register_message_handler(bot_start, commands=['start'])
+def register_user_handlers_py(dp: Dispatcher):
+    dp.register_message_handler(bot_start, commands=['start'])
