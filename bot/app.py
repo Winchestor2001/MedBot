@@ -1,20 +1,20 @@
 from aiogram import executor
 
 from bot.handlers.users.user_handlers import register_user_handlers_py
+from bot.handlers.users.my_bookings import register_my_bookings_py
+from bot.handlers.users.my_results import register_my_results_py
 from bot.loader import dp
-import middlewares, filters, handlers
-from utils.notify_admins import on_startup_notify
+# import middlewares, filters, handlers
 from bot.utils.set_bot_commands import set_default_commands
 
 
 async def on_startup(dispatcher):
-    # await db.create()
-    # await db.create_table_users()
-
-    # Birlamchi komandalar (/star va /help)
+    # Set Default Commands
     await set_default_commands(dispatcher)
-
+    # register handlers
     register_user_handlers_py(dispatcher)
+    register_my_bookings_py(dispatcher)
+    register_my_results_py(dispatcher)
 
 
 if __name__ == '__main__':
