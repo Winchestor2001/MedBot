@@ -7,7 +7,7 @@ from .models import *
 from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 
-from .yasg_schame import doctor_get_schame, patient_param
+from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param
 
 
 class UserApiView(APIView):
@@ -29,8 +29,10 @@ class UserApiView(APIView):
 
 
 class DoctorApiView(APIView):
+
     @swagger_auto_schema(
         operation_summary="Get doctors list (web)",
+        responses={200: doctor_post_schame}
     )
     def get(self, request):
         data = Doctor.objects.all()
@@ -62,7 +64,7 @@ class PatientApiView(APIView):
     @swagger_auto_schema(
         operation_summary="Get patient information",
         operation_description="This returns patient information",
-        manual_parameters=[patient_param]
+        manual_parameters=[patient_get_param]
 
     )
     def get(self, request):
@@ -71,6 +73,10 @@ class PatientApiView(APIView):
         serializer = PatientSerializer(data, many=True)
         return Response({"patient": serializer.data})
 
+    @swagger_auto_schema(
+        operation_summary="Create new patient",
+        request_body=patient_post_param
+    )
     def post(self, request):
         new_patient = Patient.objects.create(
             user=User.objects.get(user_id=request.data["user"]),
@@ -103,5 +109,3 @@ class PatientResultApiView(APIView):
         )
 
         return Response({"Patient result": model_to_dict(patient_result)})
-
-
