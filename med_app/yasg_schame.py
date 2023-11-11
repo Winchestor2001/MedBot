@@ -1,7 +1,6 @@
 from drf_yasg import openapi
 from .serializers import DoctorSerializer, PatientSerializer
 
-
 doctor_get_schame = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
@@ -38,3 +37,37 @@ patient_post_param = openapi.Schema(
     required=['user_id', 'full_name', 'phone_number', 'additional_information', 'doctor_id', 'confirance_date']
 )
 
+patient_result_post_param = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'patient': openapi.Schema(type=openapi.TYPE_INTEGER),
+        'doctor': openapi.Schema(type=openapi.TYPE_INTEGER),
+        'result_text': openapi.Schema(type=openapi.TYPE_STRING),
+    },
+    required=['patient', 'doctor', 'result_text']
+)
+
+doctor_times_get_param = [
+    openapi.Parameter(
+        name='user',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        description='User telegram id',
+        required=True
+    ),
+    openapi.Parameter(
+            name='doctor',
+            in_=openapi.IN_QUERY,
+            type=openapi.TYPE_INTEGER,
+            description='Doctor id',
+            required=True
+        )
+]
+
+doctor_times_get_schame = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'work_time': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Schema(type=openapi.TYPE_STRING)),
+    },
+    required=['work_time']
+)
