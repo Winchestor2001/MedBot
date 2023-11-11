@@ -7,7 +7,8 @@ from .models import *
 from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 
-from .yasg_schame import doctor_get_schame, patient_param
+from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
+    doctor_times_get_param, doctor_times_get_schame, patient_result_post_param
 
 
 class UserApiView(APIView):
@@ -29,8 +30,10 @@ class UserApiView(APIView):
 
 
 class DoctorApiView(APIView):
+
     @swagger_auto_schema(
         operation_summary="Get doctors list (web)",
+        responses={200: doctor_post_schame}
     )
     def get(self, request):
         data = Doctor.objects.all()
@@ -62,7 +65,7 @@ class PatientApiView(APIView):
     @swagger_auto_schema(
         operation_summary="Get patient information",
         operation_description="This returns patient information",
-        manual_parameters=[patient_param]
+        manual_parameters=[patient_get_param]
 
     )
     def get(self, request):
@@ -71,6 +74,10 @@ class PatientApiView(APIView):
         serializer = PatientSerializer(data, many=True)
         return Response({"patient": serializer.data})
 
+    @swagger_auto_schema(
+        operation_summary="Create new patient",
+        request_body=patient_post_param
+    )
     def post(self, request):
         new_patient = Patient.objects.create(
             user=User.objects.get(user_id=request.data["user"]),
@@ -84,6 +91,12 @@ class PatientApiView(APIView):
 
 
 class PatientResultApiView(APIView):
+    @swagger_auto_schema(
+        operation_summary="Get patient result information",
+        operation_description="This returns patient result information",
+        manual_parameters=[patient_get_param]
+
+    )
     def get(self, request):
         user = request.data["user"]
         patient = PatientResult.objects.filter(patient__user__user_id=user)
@@ -91,6 +104,10 @@ class PatientResultApiView(APIView):
         serializer.is_valid()
         return Response({'patient_results': serializer.data})
 
+    @swagger_auto_schema(
+        operation_summary="Create patient result",
+        request_body=patient_result_post_param
+    )
     def post(self, request):
         patient = Patient.objects.get(id=request.data["patient"])
         doctor = Doctor.objects.get(id=request.data["doctor"])
@@ -103,5 +120,20 @@ class PatientResultApiView(APIView):
         )
 
         return Response({"Patient result": model_to_dict(patient_result)})
+
+
+class GetDoctorCorrectDatesAPIView(APIView):
+    @swagger_auto_schema(
+        operation_summary="Get Correct Dates",
+        operation_description="This returns doctor work time information",
+        manual_parameters=doctor_times_get_param,
+        responses={200: doctor_times_get_schame}
+
+    )
+    def get(self, request):
+        user = request.data.get('user')
+        doctor = request.data.get('doctor')
+
+        return Response({"STATUS": "OK"})
 
 

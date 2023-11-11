@@ -1,3 +1,4 @@
+from rest_framework.fields import ListField
 from rest_framework.serializers import ModelSerializer
 from .models import *
 
@@ -16,6 +17,7 @@ class DateSerializer(ModelSerializer):
 
 
 class DoctorSerializer(ModelSerializer):
+    work_time = ListField()
 
     class Meta:
         model = Doctor
@@ -47,6 +49,5 @@ class PatientResultSerializer(ModelSerializer):
 
     class Meta:
         model = PatientResult
-        # fields = "__all__"
         exclude = ('doctor',)
 
