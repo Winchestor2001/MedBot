@@ -12,7 +12,7 @@ class UserApiView(APIView):
         return Response({"Users": UserSerializer(data, many=True).data})
 
     def post(self, request):
-        new_user = User.objects.update_or_create(
+        new_user = User.objects.get_or_create(
             user_id=request.data["user_id"],
             username=request.data["username"]
         )
@@ -46,10 +46,8 @@ class PatientApiView(APIView):
 class PatientResultApiView(APIView):
     def get(self, request):
         user = request.data["user"]
-        patient = Patient.objects.get(user__user_id=user)
-        patient_results = PatientResult.objects.filter(patient=patient)
-
-        serializer = PatientResultSerializer(data=patient_results, many=True)
+        patient = Patient.objects.filter(user__user_id=user)
+        serializer = PatientResultSerializer(data=patient, many=True)
         serializer.is_valid()
         return Response({'data': serializer.data})
 

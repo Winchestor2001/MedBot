@@ -35,6 +35,7 @@ class DoctorSerializer(ModelSerializer):
 
 
 class PatientSerializer(ModelSerializer):
+    doctor = DoctorSerializer()
     class Meta:
         model = Patient
         fields = "__all__"
@@ -44,3 +45,15 @@ class PatientResultSerializer(ModelSerializer):
     class Meta:
         model = PatientResult
         fields = "__all__"
+
+    @staticmethod
+    def get_results_date(obj):
+        i = PatientSerializer(data=obj.patient_set.all(), many=True)
+
+        i.is_valid()
+        return i.data
+
+    def to_representation(self, instance):
+        redata = super().to_representation(instance)
+        redata['results'] = self.get_results_date(instance)
+        return redata
