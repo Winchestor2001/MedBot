@@ -78,7 +78,7 @@ async def back(call: types.CallbackQuery, state: FSMContext):
 
 def register_send_ads_py(dp: Dispatcher):
     dp.register_callback_query_handler(enter_ads, IsAdmin(), text="admin:send_ads")
-    dp.register_message_handler(cancel_func_start, IsAdmin(), state=Ads.text)
     dp.register_message_handler(send_ads, IsAdmin(), state=Ads.text, content_types=["text", "photo", "video",
                                                                                     "location", "audio", "sticker"])
+    dp.register_message_handler(cancel_func_start, commands=["start"], state=Ads.text)
     dp.register_callback_query_handler(back, IsAdmin(), state=Ads.text, text="admin:back")
