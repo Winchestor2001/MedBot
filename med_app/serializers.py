@@ -1,3 +1,4 @@
+from rest_framework.fields import ListField
 from rest_framework.serializers import ModelSerializer
 from .models import *
 
@@ -16,6 +17,7 @@ class DateSerializer(ModelSerializer):
 
 
 class DoctorSerializer(ModelSerializer):
+    work_time = ListField()
 
     class Meta:
         model = Doctor
@@ -36,24 +38,15 @@ class DoctorSerializer(ModelSerializer):
 
 class PatientSerializer(ModelSerializer):
     doctor = DoctorSerializer()
+
     class Meta:
         model = Patient
         fields = "__all__"
 
 
 class PatientResultSerializer(ModelSerializer):
+    patient = PatientSerializer()
+
     class Meta:
         model = PatientResult
-        fields = "__all__"
-
-    @staticmethod
-    def get_results_date(obj):
-        i = PatientSerializer(data=obj.patient_set.all(), many=True)
-
-        i.is_valid()
-        return i.data
-
-    def to_representation(self, instance):
-        redata = super().to_representation(instance)
-        redata['results'] = self.get_results_date(instance)
-        return redata
+        exclude = ('doctor',)
