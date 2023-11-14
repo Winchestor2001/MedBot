@@ -7,7 +7,7 @@ from .models import *
 from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 
-from .utils import check_dates
+from .utils import check_dates, filter_doctor_direction
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param
 
@@ -38,7 +38,8 @@ class DoctorApiView(APIView):
     )
     def get(self, request):
         data = Doctor.objects.all()
-        return Response({"doctors": DoctorSerializer(data, many=True).data})
+        directions = filter_doctor_direction(data)
+        return Response({"doctors": DoctorSerializer(data, many=True).data, "directions": directions})
 
     @swagger_auto_schema(
         operation_summary="Create doctor (bot)",
