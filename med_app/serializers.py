@@ -17,7 +17,7 @@ class DateSerializer(ModelSerializer):
 
 
 class DoctorSerializer(ModelSerializer):
-    work_time = ListField()
+    # work_time = ListField()
 
     class Meta:
         model = Doctor
