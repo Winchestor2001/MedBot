@@ -1,9 +1,6 @@
 from aiogram import executor
-
-from bot.handlers.users.user_handlers import register_user_handlers_py
-from bot.handlers.users.my_bookings import register_my_bookings_py
-from bot.handlers.users.my_results import register_my_results_py
 from bot.loader import dp
+from bot.launcher_handler import launch_handlers
 # import middlewares, filters, handlers
 from bot.utils.set_bot_commands import set_default_commands
 
@@ -11,10 +8,8 @@ from bot.utils.set_bot_commands import set_default_commands
 async def on_startup(dispatcher):
     # Set Default Commands
     await set_default_commands(dispatcher)
-    # register handlers
-    register_user_handlers_py(dispatcher)
-    register_my_bookings_py(dispatcher)
-    register_my_results_py(dispatcher)
+    # launch handlers
+    await launch_handlers(dispatcher)
 
 
 if __name__ == '__main__':
