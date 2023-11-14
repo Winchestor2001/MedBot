@@ -7,6 +7,7 @@ from .models import *
 from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 
+from .utils import check_dates
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param
 
@@ -63,7 +64,7 @@ class DoctorApiView(APIView):
 
 class PatientApiView(APIView):
     @swagger_auto_schema(
-        operation_summary="Get patient information",
+        operation_summary="Get patient information (bot)",
         operation_description="This returns patient information",
         manual_parameters=[patient_get_param]
 
@@ -75,7 +76,7 @@ class PatientApiView(APIView):
         return Response({"patient": serializer.data})
 
     @swagger_auto_schema(
-        operation_summary="Create new patient",
+        operation_summary="Create new patient (bot)",
         request_body=patient_post_param
     )
     def post(self, request):
@@ -92,7 +93,7 @@ class PatientApiView(APIView):
 
 class PatientResultApiView(APIView):
     @swagger_auto_schema(
-        operation_summary="Get patient result information",
+        operation_summary="Get patient result information (bot)",
         operation_description="This returns patient result information",
         manual_parameters=[patient_get_param]
 
@@ -105,7 +106,7 @@ class PatientResultApiView(APIView):
         return Response({'patient_results': serializer.data})
 
     @swagger_auto_schema(
-        operation_summary="Create patient result",
+        operation_summary="Create patient result (bot)",
         request_body=patient_result_post_param
     )
     def post(self, request):
@@ -124,16 +125,17 @@ class PatientResultApiView(APIView):
 
 class GetDoctorCorrectDatesAPIView(APIView):
     @swagger_auto_schema(
-        operation_summary="Get Correct Dates",
+        operation_summary="Get Correct Dates (web)",
         operation_description="This returns doctor work time information",
         manual_parameters=doctor_times_get_param,
         responses={200: doctor_times_get_schame}
 
     )
     def get(self, request):
-        user = request.data.get('user')
-        doctor = request.data.get('doctor')
+        user = Patient.objects.filter(user=User.objects.get(user_id=request.GET.get('user')))
+        doctor = Doctor.objects.get(pk=request.GET.get('doctor'))
+        result = check_dates(user, doctor)
 
-        return Response({"STATUS": "OK"})
+        return Response({"STATUS": "OK", "correct_date": result})
 
 
