@@ -16,5 +16,15 @@ def check_dates(user_data, doctor_data):
         if not is_conflict and doctor_date in doctor_dates:
             filtered_doctor_dates.append(doctor_date)
 
-    print(filtered_doctor_dates)
     return filtered_doctor_dates
+
+
+def filter_doctor_direction(data):
+    result = []
+
+    for item in data:
+        result.append(
+            item.direction
+        )
+
+    return result
