@@ -1,7 +1,6 @@
 from aiogram import types, Dispatcher
-from bot.loader import dp, bot
-from bot.keyboards.inline.intro import main_keyboard
-from bot.connection.api_connection import *
+from keyboards.inline.intro import main_keyboard
+from connection.api_connection import *
 
 
 async def bot_start(message: types.Message):

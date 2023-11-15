@@ -1,8 +1,8 @@
 from aiogram import executor
-from bot.loader import dp
-from bot.launcher_handler import launch_handlers
+from loader import dp
+from launcher_handler import launch_handlers
 # import middlewares, filters, handlers
-from bot.utils.set_bot_commands import set_default_commands
+from utils.set_bot_commands import set_default_commands
 
 
 async def on_startup(dispatcher):

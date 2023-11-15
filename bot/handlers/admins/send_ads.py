@@ -1,13 +1,13 @@
 import asyncio
 from aiogram.dispatcher import FSMContext
 from aiogram import types, Dispatcher
-from bot.connection.api_connection import get_users
-from bot.filters.isAdmin import IsAdmin
-from bot.handlers.admins.intro_admin import intro_admin
-from bot.keyboards.inline.intro import main_keyboard
-from bot.loader import bot
-from bot.states.Admin import Ads
-from bot.keyboards.inline.admin_func import back_btn
+from connection.api_connection import get_users
+from filters.isAdmin import IsAdmin
+from handlers.admins.intro_admin import intro_admin
+from keyboards.inline.intro import main_keyboard
+from loader import bot
+from states.Admin import Ads
+from keyboards.inline.admin_func import back_btn
 
 
 async def enter_ads(call: types.CallbackQuery):

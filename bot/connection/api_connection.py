@@ -1,6 +1,6 @@
 import aiohttp
 import json
-from bot.data.config import API_URL
+from data.config import API_URL
 
 
 async def add_user(user_id, username=None):

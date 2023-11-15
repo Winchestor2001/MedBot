@@ -1,8 +1,8 @@
 from aiogram import types, Dispatcher
-from bot.connection.api_connection import *
-from bot.filters.isAdmin import IsAdmin
-from bot.keyboards.inline.admin_func import back_btn
-from bot.handlers.admins.intro_admin import intro_admin
+from connection.api_connection import *
+from filters.isAdmin import IsAdmin
+from keyboards.inline.admin_func import back_btn
+from handlers.admins.intro_admin import intro_admin
 
 
 async def get_all_user(call: types.CallbackQuery):

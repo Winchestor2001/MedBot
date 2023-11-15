@@ -1,9 +1,9 @@
-from bot.handlers.admins.get_statistics import register_get_statistics_py
-from bot.handlers.admins.intro_admin import register_admin_intro_handler
-from bot.handlers.users.my_bookings import register_my_bookings_py
-from bot.handlers.users.my_results import register_my_results_py
-from bot.handlers.users.user_handlers import register_user_handlers_py
-from bot.handlers.admins.send_ads import register_send_ads_py
+from handlers.admins.get_statistics import register_get_statistics_py
+from handlers.admins.intro_admin import register_admin_intro_handler
+from handlers.users.my_bookings import register_my_bookings_py
+from handlers.users.my_results import register_my_results_py
+from handlers.users.user_handlers import register_user_handlers_py
+from handlers.admins.send_ads import register_send_ads_py
 
 
 async def launch_handlers(dispatcher):

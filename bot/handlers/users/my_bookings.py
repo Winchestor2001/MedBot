@@ -1,9 +1,9 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
-from bot.keyboards.inline.intro import main_keyboard
-from bot.keyboards.inline.bookings import get_bookings_btn, back_btn
-from bot.connection.api_connection import *
-from bot.utils.misc.change_format_date import detail_date
+from keyboards.inline.intro import main_keyboard
+from keyboards.inline.bookings import get_bookings_btn, back_btn
+from connection.api_connection import *
+from utils.misc.change_format_date import detail_date
 
 
 async def profile(call: types.CallbackQuery, state: FSMContext):
