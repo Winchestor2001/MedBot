@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from bot.utils.misc.change_format_date import change_format_date
+from utils.misc.change_format_date import change_format_date
 
 
 async def get_results_btn(data):
