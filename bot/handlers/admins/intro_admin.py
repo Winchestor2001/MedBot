@@ -1,7 +1,7 @@
 from aiogram import types, Dispatcher
-from bot.keyboards.inline.admin_func import keyboard
-from bot.filters.isAdmin import IsAdmin
-from bot.keyboards.inline.intro import main_keyboard
+from keyboards.inline.admin_func import keyboard
+from filters.isAdmin import IsAdmin
+from keyboards.inline.intro import main_keyboard
 
 
 async def intro_admin(message: types.Message):
