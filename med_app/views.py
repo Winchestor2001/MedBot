@@ -9,7 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from .utils import check_dates, filter_doctor_direction
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
-    doctor_times_get_param, doctor_times_get_schame, patient_result_post_param
+    doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param
 
 
 class UserApiView(APIView):
@@ -28,6 +28,18 @@ class UserApiView(APIView):
             return Response({"user": serializer.data}, status=201)
         else:
             return Response({"user": "Alredy created"}, status=200)
+
+
+class DoctorInfoApiView(APIView):
+    @swagger_auto_schema(
+        operation_summary="Get doctor information (web)",
+        operation_description="This returns doctor information",
+        manual_parameters=[doctor_get_param]
+    )
+    def get(self, request):
+        data = Doctor.objects.get(pk=request.GET["doctor_id"])
+        serializer = DoctorSerializer(instance=data)
+        return Response({"doctors": serializer.data})
 
 
 class DoctorApiView(APIView):
