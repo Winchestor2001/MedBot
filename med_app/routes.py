@@ -3,5 +3,5 @@ from med_app import consumers
 
 
 websocket_urlpatterns = [
-    re_path(r'ws/video/(?P<room_name>\w+)/$', consumers.VideoConsumer.as_asgi()),
+    re_path(r'ws/meet/(?P<room_name>\w+)/$', consumers.VideoConsumer.as_asgi()),
 ]
