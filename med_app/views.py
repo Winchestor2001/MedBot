@@ -93,13 +93,21 @@ class PatientApiView(APIView):
         request_body=patient_post_param
     )
     def post(self, request):
+        selected_date = request.data["selectedDate"]
+        selected_time = request.data["selectedTime"]
+        selected_month = request.data["selectedMonth"]
+        start_time_str = selected_time.split('-')[0].strip()
+
+        formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
+        formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
+
         new_patient = Patient.objects.create(
             user=User.objects.get(user_id=request.data["user"]),
             full_name=request.data["fullname"],
             phone_number=request.data["phone_number"],
             additional_information=request.data["additional_information"],
             doctor=Doctor.objects.get(id=request.data["doctor"]),
-            confirance_date=datetime.strptime(request.data["confirence_date"], '%Y-%m-%d %H:%M'),
+            confirance_date=formatted_datetime,
         )
         return Response({"patient": model_to_dict(new_patient)})
 
