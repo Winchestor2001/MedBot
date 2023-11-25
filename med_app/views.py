@@ -121,7 +121,7 @@ class PatientResultApiView(APIView):
     )
     def get(self, request):
         user = request.data["user"]
-        patient = PatientResult.objects.filter(patient__user__user_id=user)
+        patient = Patient.objects.filter(user__user_id=user)
         serializer = PatientResultSerializer(data=patient, many=True)
         serializer.is_valid()
         return Response({'patient_results': serializer.data})
