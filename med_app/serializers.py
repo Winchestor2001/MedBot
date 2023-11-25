@@ -50,4 +50,3 @@ class PatientResultSerializer(ModelSerializer):
     class Meta:
         model = PatientResult
         exclude = ('doctor',)
-
