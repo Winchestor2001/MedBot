@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import aiohttp
 
 
 def check_dates(user_data, doctor_data):
@@ -28,3 +29,14 @@ def filter_doctor_direction(data):
         )
 
     return result
+
+
+async def send_message(token, user_id, msg):
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    params = {
+        "chat_id": user_id,
+        "text": msg
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, params=params) as response:
+            return await response.json()
