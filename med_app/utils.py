@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import base64
+import aiohttp
 
 
 def check_dates(user_data, doctor_data):
@@ -57,4 +58,12 @@ def create_hash(data):
     return base64_string
 
 
-
+async def send_message(token, user_id, msg):
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    params = {
+        "chat_id": user_id,
+        "text": msg
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, params=params) as response:
+            return await response.json()
