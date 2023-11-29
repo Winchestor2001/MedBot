@@ -6,8 +6,8 @@ from .serializers import *
 from .models import *
 from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
-
-from .utils import check_dates, filter_doctor_direction
+from bot.data.config import BOT_TOKEN
+from .utils import check_dates, filter_doctor_direction, send_message
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param
 
@@ -77,7 +77,7 @@ class DoctorApiView(APIView):
 
 class PatientApiView(APIView):
     @swagger_auto_schema(
-        operation_summary="Get patient information (bot)",
+        operation_summary="Get patient information (bot/web)",
         operation_description="This returns patient information",
         manual_parameters=[patient_get_param]
 
@@ -93,22 +93,33 @@ class PatientApiView(APIView):
         request_body=patient_post_param
     )
     def post(self, request):
-        selected_date = request.data["selectedDate"]
-        selected_time = request.data["selectedTime"]
-        selected_month = request.data["selectedMonth"]
-        start_time_str = selected_time.split('-')[0].strip()
+        selected_date = request.data['conference_date']["selectedDate"]
+        selected_time = request.data['conference_date']["selectedTime"]
+        selected_month = request.data['conference_date']["selectedMonth"]
+        start_time_str = selected_time.split(' - ')[0].strip()
 
         formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
         formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
 
         new_patient = Patient.objects.create(
             user=User.objects.get(user_id=request.data["user"]),
-            full_name=request.data["fullname"],
+            full_name=request.data["full_name"],
             phone_number=request.data["phone_number"],
             additional_information=request.data["additional_information"],
-            doctor=Doctor.objects.get(id=request.data["doctor"]),
+            doctor=Doctor.objects.get(id=request.data["doctor_id"]),
             confirance_date=formatted_datetime,
         )
+        print(request.body)
+        print(new_patient)
+        # msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
+        #       f"📋 Заказ ID: \n" \
+        #       f"👨‍⚕️ Доктор: samuel\n" \
+        #       f"📆 Дата и время: 17November\n\n" \
+        #       f"📍 Локатция: dsa\n\n" \
+        #       f"Спасибо, что выбрали наш сервис! Если у вас есть какие-либо вопросы или вам нужно перенести встречу, " \
+        #       f"свяжитесь с нами. 📞"
+        # user_id = 123444
+        # await send_message(BOT_TOKEN, user_id, msg)
         return Response({"patient": model_to_dict(new_patient)})
 
 
@@ -127,7 +138,7 @@ class PatientResultApiView(APIView):
         return Response({'patient_results': serializer.data})
 
     @swagger_auto_schema(
-        operation_summary="Create patient result (bot)",
+        operation_summary="Create patient result (web)",
         request_body=patient_result_post_param
     )
     def post(self, request):
