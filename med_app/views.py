@@ -129,7 +129,7 @@ class PatientApiView(APIView):
 
         formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
         formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
-
+        
         new_patient = Patient.objects.create(
             user=User.objects.get(user_id=request.data["user"]),
             full_name=request.data["full_name"],

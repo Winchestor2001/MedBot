@@ -11,7 +11,7 @@ async def add_user(user_id, username=None):
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(url, data=payload) as response:
-            if response.status == 200:
+            if response.status == 201:
                 return await response.json()
             else:
                 return "REQUEST ERROR"
