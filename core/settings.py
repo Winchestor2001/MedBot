@@ -17,6 +17,8 @@ SECRET_KEY = env.str('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG')
 
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
+
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 
