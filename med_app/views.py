@@ -77,7 +77,7 @@ class DoctorApiView(APIView):
 
 class PatientApiView(APIView):
     @swagger_auto_schema(
-        operation_summary="Get patient information (bot)",
+        operation_summary="Get patient information (bot/web)",
         operation_description="This returns patient information",
         manual_parameters=[patient_get_param]
 
@@ -93,20 +93,20 @@ class PatientApiView(APIView):
         request_body=patient_post_param
     )
     def post(self, request):
-        selected_date = request.data["selectedDate"]
-        selected_time = request.data["selectedTime"]
-        selected_month = request.data["selectedMonth"]
-        start_time_str = selected_time.split('-')[0].strip()
+        selected_date = request.data['conference_date']["selectedDate"]
+        selected_time = request.data['conference_date']["selectedTime"]
+        selected_month = request.data['conference_date']["selectedMonth"]
+        start_time_str = selected_time.split(' - ')[0].strip()
 
         formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
         formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
 
         new_patient = Patient.objects.create(
             user=User.objects.get(user_id=request.data["user"]),
-            full_name=request.data["fullname"],
+            full_name=request.data["full_name"],
             phone_number=request.data["phone_number"],
             additional_information=request.data["additional_information"],
-            doctor=Doctor.objects.get(id=request.data["doctor"]),
+            doctor=Doctor.objects.get(id=request.data["doctor_id"]),
             confirance_date=formatted_datetime,
         )
         print(request.body)
