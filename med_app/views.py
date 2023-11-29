@@ -10,6 +10,9 @@ from bot.data.config import BOT_TOKEN
 from .utils import check_dates, filter_doctor_direction, send_message
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class UserApiView(APIView):
@@ -25,6 +28,7 @@ class UserApiView(APIView):
             }
         )
         if serializer.is_valid():
+            serializer.save()
             return Response({"user": serializer.data}, status=201)
         else:
             return Response({"user": "Alredy created"}, status=200)
@@ -110,7 +114,6 @@ class PatientApiView(APIView):
             confirance_date=formatted_datetime,
         )
         print(request.body)
-        print(new_patient)
         # msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
         #       f"📋 Заказ ID: \n" \
         #       f"👨‍⚕️ Доктор: samuel\n" \
