@@ -37,7 +37,8 @@ class Doctor(models.Model):
 
 class Date(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    work_time = models.DateTimeField()
+    date = models.DateField(blank=True, null=True)
+    time_interval = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return str(self.doctor)
@@ -53,8 +54,9 @@ class Patient(models.Model):
     phone_number = models.CharField(max_length=255)
     additional_information = models.TextField(null=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
-    confirance_date = models.DateTimeField(default=None)
-    confirance_stastus = models.CharField(max_length=20, choices=CONFIRANCE_STASTUS, default='wait')
+    confirance_date = models.DateField(default=None)
+    confirance_time = models.CharField(max_length=50, blank=True, null=True)
+    confirance_status = models.CharField(max_length=20, choices=CONFIRANCE_STASTUS, default='wait')
 
     def __str__(self):
         return self.full_name

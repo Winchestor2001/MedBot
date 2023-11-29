@@ -3,11 +3,17 @@ import base64
 import aiohttp
 
 
-def check_dates(user_data, doctor_data):
+def check_dates(user_data, doctor_data, date):
     user_dates = [item.confirance_date for item in user_data]
-    doctor_dates = [item.work_time for item in doctor_data.date_set.all()]
+    doctor_dates = [item.date for item in doctor_data.date_set.all()]
 
     all_dates = user_dates + doctor_dates
+    print(user_dates)
+    print(doctor_dates)
+
+    for d_date in doctor_dates:
+        if d_date not in user_dates:
+            print(d_date)
 
     sorted_dates = sorted(all_dates)
 

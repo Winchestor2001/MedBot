@@ -23,7 +23,7 @@ class DoctorAdmin(admin.ModelAdmin):
 
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ["user", "full_name", "confirance_stastus"]
+    list_display = ["user", "full_name", "confirance_status"]
 
 
 @admin.register(PatientResult)
