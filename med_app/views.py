@@ -7,7 +7,7 @@ from .models import *
 from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 from bot.data.config import BOT_TOKEN
-from .utils import check_dates, filter_doctor_direction, send_message
+from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param
 import logging
@@ -113,16 +113,17 @@ class PatientApiView(APIView):
             doctor=Doctor.objects.get(id=request.data["doctor_id"]),
             confirance_date=formatted_datetime,
         )
-        print(request.body)
-        # msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
-        #       f"📋 Заказ ID: \n" \
-        #       f"👨‍⚕️ Доктор: samuel\n" \
-        #       f"📆 Дата и время: 17November\n\n" \
-        #       f"📍 Локатция: dsa\n\n" \
-        #       f"Спасибо, что выбрали наш сервис! Если у вас есть какие-либо вопросы или вам нужно перенести встречу, " \
-        #       f"свяжитесь с нами. 📞"
-        # user_id = 123444
-        # await send_message(BOT_TOKEN, user_id, msg)
+        data = model_to_dict(new_patient)
+        get_doctor = Doctor.objects.get(id=data["doctor"])
+        date = modify_date_type(str(data["confirance_date"]))
+        msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
+              f"📋 Заказ ID: {data['id']}\n" \
+              f"👨‍⚕️ Доктор: {get_doctor}\n" \
+              f"📆 Дата и время: {date}\n\n" \
+              f"Спасибо, что выбрали наш сервис! Если у вас есть какие-либо вопросы или вам нужно перенести встречу, " \
+              f"свяжитесь с нами. 📞"
+        user_id = int(request.data["user"])
+        send_message(BOT_TOKEN, user_id, msg)
         return Response({"patient": model_to_dict(new_patient)})
 
 

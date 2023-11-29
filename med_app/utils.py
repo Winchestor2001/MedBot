@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import base64
-import aiohttp
+import requests
+from googletrans import Translator
 
 
 def check_dates(user_data, doctor_data, date):
@@ -64,12 +65,23 @@ def create_hash(data):
     return base64_string
 
 
-async def send_message(token, user_id, msg):
+def send_message(token, user_id, msg):
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     params = {
         "chat_id": user_id,
         "text": msg
     }
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, params=params) as response:
-            return await response.json()
+    response = requests.post(url, data=params)
+    return response.json()
+
+
+translator = Translator()
+
+
+def modify_date_type(date):
+    input_datetime = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+    day = input_datetime.day
+    month = input_datetime.strftime("%B")
+    changed_type = f"{day} {month}"
+    lang_changed = translator.translate(changed_type, dest='ru').text
+    return lang_changed
