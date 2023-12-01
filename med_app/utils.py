@@ -2,6 +2,9 @@ from datetime import datetime, timedelta
 import base64
 import requests
 from googletrans import Translator
+import json
+from aiogram.types import WebAppInfo
+from bot.data.config import BOT_TOKEN
 
 
 def check_dates(user_data, doctor_data):
@@ -79,3 +82,24 @@ def modify_date_type(date):
     changed_type = f"{day} {month}"
     lang_changed = translator.translate(changed_type, dest='ru').text
     return lang_changed
+
+
+def send_message_with_web_app(user_id, url, message):
+    base_url = f'https://api.telegram.org/bot{BOT_TOKEN}/'
+
+    web = WebAppInfo(url=f"{url}")
+    inline_keyboard = {
+        'inline_keyboard': [
+            [{'text': 'Go Meeting', 'web_app': web.__dict__['_values']}]
+        ]
+    }
+    inline_keyboard_json = json.dumps(inline_keyboard)
+    response = requests.post(
+        base_url + 'sendMessage',
+        json={
+            'chat_id': user_id,
+            'text': message,
+            'reply_markup': inline_keyboard_json
+        }
+    )
+    return response.json()
