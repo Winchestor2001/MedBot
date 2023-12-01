@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import base64
 import requests
 from googletrans import Translator
+import secrets
 
 
 def check_dates(user_data, doctor_data, date):
@@ -79,3 +80,10 @@ def modify_date_type(date):
     changed_type = f"{day} {month}"
     lang_changed = translator.translate(changed_type, dest='ru').text
     return lang_changed
+
+
+def generate_room_code(length=6):
+    characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    room_code = ''.join(secrets.choice(characters) for _ in range(length))
+
+    return room_code

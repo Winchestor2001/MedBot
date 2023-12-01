@@ -71,12 +71,12 @@ class PatientResult(models.Model):
         return str(self.patient)
 
 
-# class MeetingRoom(models.Model):
-#     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-#     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-#     meet_code = models.CharField(max_length=100)
-#
-#     def __str__(self):
-#         return str(self.patient)
+class MeetingRoom(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    meet_code = models.CharField(max_length=100)
+
+    def __str__(self):
+        return str(self.patient)
 
 

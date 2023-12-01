@@ -113,6 +113,12 @@ class PatientApiView(APIView):
             doctor=Doctor.objects.get(id=request.data["doctor_id"]),
             confirance_date=formatted_datetime,
         )
+
+        MeetingRoom.objects.create(
+            patient=new_patient,
+            doctor=Doctor.objects.get(id=request.data["doctor"])
+        )
+
         data = model_to_dict(new_patient)
         get_doctor = Doctor.objects.get(id=data["doctor"])
         date = modify_date_type(str(data["confirance_date"]))

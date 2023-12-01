@@ -29,3 +29,9 @@ class PatientAdmin(admin.ModelAdmin):
 @admin.register(PatientResult)
 class PatientResultAdmin(admin.ModelAdmin):
     list_display = ["patient", "doctor"]
+
+
+@admin.register(MeetingRoom)
+class MeetingRoomAdmin(admin.ModelAdmin):
+    list_display = ["patient", "doctor"]
+
