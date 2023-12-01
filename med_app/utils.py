@@ -5,27 +5,21 @@ from googletrans import Translator
 
 
 def check_dates(user_data, doctor_data, date):
-    user_dates = [item.confirance_date for item in user_data]
-    doctor_dates = [item.date for item in doctor_data.date_set.all()]
+    user_dates = [(item.confirance_date, item.confirance_time)for item in user_data]
+    doctor_dates = [(item.date, item.time_interval) for item in doctor_data.date_set.all()]
 
-    all_dates = user_dates + doctor_dates
-    print(user_dates)
-    print(doctor_dates)
+    coinciding_dates = []
+    new_times = []
 
     for d_date in doctor_dates:
-        if d_date not in user_dates:
-            print(d_date)
+        if d_date[0].day == int(date):
+            coinciding_dates.append(d_date)
+    if coinciding_dates:
+        for doc_interval in coinciding_dates:
+            if not any(part[1] in doc_interval[1] for part in user_dates):
+                new_times.append(doc_interval)
 
-    sorted_dates = sorted(all_dates)
-
-    filtered_doctor_dates = []
-
-    for doctor_date in sorted_dates:
-        is_conflict = any(abs(doctor_date - user_date) < timedelta(minutes=30) for user_date in user_dates)
-        if not is_conflict and doctor_date in doctor_dates:
-            filtered_doctor_dates.append(doctor_date)
-
-    return filtered_doctor_dates
+    return new_times
 
 
 def filter_doctor_direction(data):
