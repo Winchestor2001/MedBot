@@ -74,6 +74,7 @@ class PatientResult(models.Model):
 class MeetingRoom(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    start_meet_date = models.DateTimeField(blank=True, null=True)
     meet_code = models.CharField(max_length=100)
 
     def __str__(self):
