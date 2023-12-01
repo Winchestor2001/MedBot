@@ -5,8 +5,8 @@ import json
 
 async def handle(request):
     # Ваш токен бота и ID чата
-    bot_token = 'token'
-    chat_id = 'id'
+    bot_token = 'bot_token'
+    chat_id = 'user_id'
 
     # Создайте объект InlineKeyboardMarkup с ссылкой
     inline_keyboard = [[{"text": "Открыть ссылку", "url": "https://webmed-two.vercel.app/"}]]

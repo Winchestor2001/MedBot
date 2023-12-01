@@ -4,25 +4,26 @@ import requests
 from googletrans import Translator
 import json
 from aiogram.types import WebAppInfo
+import secrets
 from bot.data.config import BOT_TOKEN
 
 
-def check_dates(user_data, doctor_data):
-    user_dates = [item.confirance_date for item in user_data]
-    doctor_dates = [item.work_time for item in doctor_data.date_set.all()]
+def check_dates(user_data, doctor_data, date):
+    user_dates = [(item.confirance_date, item.confirance_time)for item in user_data]
+    doctor_dates = [(item.date, item.time_interval) for item in doctor_data.date_set.all()]
 
-    all_dates = user_dates + doctor_dates
+    coinciding_dates = []
+    new_times = []
 
-    sorted_dates = sorted(all_dates)
+    for d_date in doctor_dates:
+        if d_date[0].day == int(date):
+            coinciding_dates.append(d_date)
+    if coinciding_dates:
+        for doc_interval in coinciding_dates:
+            if not any(part[1] in doc_interval[1] for part in user_dates):
+                new_times.append(doc_interval)
 
-    filtered_doctor_dates = []
-
-    for doctor_date in sorted_dates:
-        is_conflict = any(abs(doctor_date - user_date) < timedelta(minutes=30) for user_date in user_dates)
-        if not is_conflict and doctor_date in doctor_dates:
-            filtered_doctor_dates.append(doctor_date)
-
-    return filtered_doctor_dates
+    return new_times
 
 
 def filter_doctor_direction(data):
@@ -33,7 +34,7 @@ def filter_doctor_direction(data):
             item.direction
         )
 
-    return result
+    return list(set(result))
 
 
 def create_hash(data):
@@ -103,3 +104,11 @@ def send_message_with_web_app(user_id, url, message):
         }
     )
     return response.json()
+
+
+def generate_room_code(length=6):
+    characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    room_code = ''.join(secrets.choice(characters) for _ in range(length))
+
+    return room_code
+

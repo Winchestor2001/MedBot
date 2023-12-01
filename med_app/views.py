@@ -113,6 +113,12 @@ class PatientApiView(APIView):
             doctor=Doctor.objects.get(id=request.data["doctor_id"]),
             confirance_date=formatted_datetime,
         )
+
+        MeetingRoom.objects.create(
+            patient=new_patient,
+            doctor=Doctor.objects.get(id=request.data["doctor"])
+        )
+
         data = model_to_dict(new_patient)
         get_doctor = Doctor.objects.get(id=data["doctor"])
         date = modify_date_type(str(data["confirance_date"]))
@@ -170,7 +176,8 @@ class GetDoctorCorrectDatesAPIView(APIView):
     def get(self, request):
         user = Patient.objects.filter(user=User.objects.get(user_id=request.GET.get('user')))
         doctor = Doctor.objects.get(pk=request.GET.get('doctor'))
-        result = check_dates(user, doctor)
+        date = request.GET.get('date')
+        result = check_dates(user, doctor, date)
 
         return Response({"STATUS": "OK", "correct_date": result})
 

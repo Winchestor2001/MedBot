@@ -13,11 +13,10 @@ class DateSerializer(ModelSerializer):
 
     class Meta:
         model = Date
-        fields = ('work_time',)
+        fields = "__all__"
 
 
 class DoctorSerializer(ModelSerializer):
-    # work_time = ListField()
 
     class Meta:
         model = Doctor
@@ -32,7 +31,7 @@ class DoctorSerializer(ModelSerializer):
 
     def to_representation(self, instance):
         redata = super().to_representation(instance)
-        redata['work_time'] = [item['work_time'] for item in self.get_doctor_date(instance)]
+        redata['date'] = [item['time_interval'] for item in self.get_doctor_date(instance)]
         return redata
 
 

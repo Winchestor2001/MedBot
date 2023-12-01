@@ -159,3 +159,13 @@ JAZZMIN_SETTINGS = {
     "custom_css": "css/admin_style.css",
     "custom_js": "js/admin_copy_btn.js",
 }
+
+# Celery
+REDIS_HOST = env.str("REDIS_HOST")
+REDIS_PORT = env.str("REDIS_PORT")
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_ACCEPT_CONTENT = env.list("CELERY_ACCEPT_CONTENT")
+CELERY_TASK_SERIALIZER = env.str("CELERY_TASK_SERIALIZER")
+CELERY_RESULT_SERIALIZER = env.str("CELERY_RESULT_SERIALIZER")
