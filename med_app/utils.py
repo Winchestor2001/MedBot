@@ -31,7 +31,7 @@ def filter_doctor_direction(data):
             item.direction
         )
 
-    return result
+    return list(set(result))
 
 
 def create_hash(data):
