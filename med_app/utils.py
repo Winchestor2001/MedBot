@@ -9,7 +9,7 @@ from bot.data.config import BOT_TOKEN
 
 
 def check_dates(user_data, doctor_data, month, day):
-    user_dates = [(item.confirance_date, item.confirance_time)for item in user_data]
+    user_dates = [(item.confirance_date, item.confirance_time) for item in user_data]
     doctor_dates = [(item.date, item.time_interval) for item in doctor_data.date_set.all()]
 
     coinciding_dates = []
@@ -18,12 +18,14 @@ def check_dates(user_data, doctor_data, month, day):
     for d_date in doctor_dates:
         if d_date[0].month == int(month) and d_date[0].day == int(day):
             coinciding_dates.append(d_date)
+
     if coinciding_dates:
         for doc_interval in coinciding_dates:
-            if not any(part[1] in doc_interval[1] for part in user_dates):
+            if not any(part[1] == doc_interval[1] for part in user_dates):
                 new_times.append(doc_interval)
 
     return new_times
+
 
 
 def filter_doctor_direction(data):
