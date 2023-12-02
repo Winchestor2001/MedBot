@@ -64,19 +64,26 @@ doctor_times_get_param = [
         required=True
     ),
     openapi.Parameter(
-            name='doctor',
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_INTEGER,
-            description='Doctor id',
-            required=True
-        ),
+        name='doctor',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        description='Doctor id',
+        required=True
+    ),
     openapi.Parameter(
-                name='date',
-                in_=openapi.IN_QUERY,
-                type=openapi.TYPE_INTEGER,
-                description='Month number',
-                required=True
-            )
+        name='month',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        description='Month number',
+        required=True
+    ),
+    openapi.Parameter(
+        name='day',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        description='Day number',
+        required=True
+    )
 ]
 
 doctor_times_get_schame = openapi.Schema(

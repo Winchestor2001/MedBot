@@ -176,9 +176,8 @@ class GetDoctorCorrectDatesAPIView(APIView):
     def get(self, request):
         user = Patient.objects.filter(user=User.objects.get(user_id=request.GET.get('user')))
         doctor = Doctor.objects.get(pk=request.GET.get('doctor'))
-        date = request.GET.get('date')
-        result = check_dates(user, doctor, date)
+        month = request.GET.get('month')
+        day = request.GET.get('day')
+        result = check_dates(user, doctor, month, day)
 
         return Response({"STATUS": "OK", "correct_date": result})
-
-

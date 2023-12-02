@@ -8,7 +8,7 @@ import secrets
 from bot.data.config import BOT_TOKEN
 
 
-def check_dates(user_data, doctor_data, date):
+def check_dates(user_data, doctor_data, month, day):
     user_dates = [(item.confirance_date, item.confirance_time)for item in user_data]
     doctor_dates = [(item.date, item.time_interval) for item in doctor_data.date_set.all()]
 
@@ -16,7 +16,7 @@ def check_dates(user_data, doctor_data, date):
     new_times = []
 
     for d_date in doctor_dates:
-        if d_date[0].day == int(date):
+        if d_date[0].month == int(month) and d_date[0].day == int(day):
             coinciding_dates.append(d_date)
     if coinciding_dates:
         for doc_interval in coinciding_dates:
