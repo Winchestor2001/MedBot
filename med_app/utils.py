@@ -15,9 +15,12 @@ def check_dates(user_data, doctor_data, month, day):
     coinciding_dates = []
     new_times = []
 
-    for d_date in doctor_dates:
-        if d_date[0].month == int(month) and d_date[0].day == int(day):
-            coinciding_dates.append(d_date)
+    try:
+        for d_date in doctor_dates:
+            if d_date[0].month == int(month) and d_date[0].day == int(day):
+                coinciding_dates.append(d_date)
+    except:
+        pass
 
     if coinciding_dates:
         for doc_interval in coinciding_dates:
