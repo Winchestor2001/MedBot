@@ -87,9 +87,9 @@ class PatientApiView(APIView):
 
     )
     def get(self, request):
-        user = User.objects.get(user_id=request.data["user"])
+        user = User.objects.get(user_id=request.GET["user"])
         data = Patient.objects.filter(user=user)
-        serializer = PatientSerializer(data, many=True)
+        serializer = PatientSerializer(instance=data, many=True)
         return Response({"patient": serializer.data})
 
     @swagger_auto_schema(
