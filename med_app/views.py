@@ -93,7 +93,7 @@ class PatientApiView(APIView):
         return Response({"patient": serializer.data})
 
     @swagger_auto_schema(
-        operation_summary="Create new patient (bot)",
+        operation_summary="Create new patient (web)",
         request_body=patient_post_param
     )
     def post(self, request):
