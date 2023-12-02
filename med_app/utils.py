@@ -27,7 +27,6 @@ def check_dates(user_data, doctor_data, month, day):
     return new_times
 
 
-
 def filter_doctor_direction(data):
     result = []
 
