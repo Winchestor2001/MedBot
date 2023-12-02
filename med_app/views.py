@@ -116,11 +116,11 @@ class PatientApiView(APIView):
 
         MeetingRoom.objects.create(
             patient=new_patient,
-            doctor=Doctor.objects.get(id=request.data["doctor_id"])
+            doctor=new_patient.doctor
         )
 
         data = model_to_dict(new_patient)
-        get_doctor = Doctor.objects.get(id=data["doctor_id"])
+        get_doctor = new_patient.doctor
         date = modify_date_type(str(data["confirance_date"]))
         msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
               f"📋 Заказ ID: {data['id']}\n" \
