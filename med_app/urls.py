@@ -8,5 +8,6 @@ urlpatterns = [
     path("doctor_info/", DoctorInfoApiView.as_view()),
     path("doctor_work_time/", GetDoctorCorrectDatesAPIView.as_view()),
     path("patient/", PatientApiView.as_view()),
+    path("single_patient/", SinglePatientApiView.as_view()),
     path("patient_result/", PatientResultApiView.as_view()),
 ]

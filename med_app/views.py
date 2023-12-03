@@ -9,7 +9,8 @@ from drf_yasg.utils import swagger_auto_schema
 from bot.data.config import BOT_TOKEN
 from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
-    doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param
+    doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param, \
+    single_patient_get_param
 import logging
 
 logger = logging.getLogger(__name__)
@@ -77,6 +78,22 @@ class DoctorApiView(APIView):
             is_doctor=is_doc,
         )
         return Response({"user": model_to_dict(new_user[0])})
+
+
+class SinglePatientApiView(APIView):
+    @swagger_auto_schema(
+        operation_summary="Get single patient information (web)",
+        operation_description="This return patient information",
+        manual_parameters=[single_patient_get_param]
+
+    )
+    def get(self, request):
+        patient = Patient.objects.filter(id=request.GET["patient_id"])
+        if patient.exists():
+            serializer = PatientSerializer(instance=patient[0])
+            return Response({"patient": serializer.data})
+        else:
+            return Response({"patient": "No Exists"}, status=403)
 
 
 class PatientApiView(APIView):
