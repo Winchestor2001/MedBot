@@ -32,7 +32,8 @@ class UserApiView(APIView):
             serializer.save()
             return Response({"user": serializer.data}, status=201)
         else:
-            return Response({"user": "Alredy created"}, status=200)
+            user = User.objects.get(user_id=request.data["user_id"])
+            return Response({"user": model_to_dict(user)}, status=200)
 
 
 class DoctorInfoApiView(APIView):
