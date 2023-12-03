@@ -130,7 +130,8 @@ class PatientApiView(APIView):
             doctor=Doctor.objects.get(id=request.data["doctor_id"]),
             confirance_date=formatted_datetime,
         )
-
+        current_year = datetime.now().year
+        formatted_datetime = formatted_datetime.replace(year=current_year)
         MeetingRoom.objects.create(
             patient=new_patient,
             doctor=new_patient.doctor,
