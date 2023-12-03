@@ -1,7 +1,7 @@
 from django.forms import model_to_dict
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, get_object_or_404
 from .serializers import *
 from .models import *
 from datetime import datetime
@@ -66,23 +66,21 @@ class DoctorApiView(APIView):
         user_id = request.data["user_id"]
         username = request.data["username"]
         activate_code = request.data["activate_code"]
-        doctor = Doctor.objects.filter(activate_url__contains=activate_code)
-        if doctor.exists():
-            is_doc = True
-        else:
-            is_doc = False
+        doctor = get_object_or_404(Doctor, activate_url__contains=activate_code)
+        is_doc = True
 
-        user = User.objects.filter(user_id=user_id)
-        if user.exists():
-            user[0].is_doctor = is_doc
-            user[0].save()
-        else:
-            user = User.objects.create(
-                user_id=user_id,
-                username=username,
-                is_doctor=is_doc,
-            )
-        return Response({"user": model_to_dict(user[0])})
+        user, created = User.objects.get_or_create(
+            user_id=user_id,
+            defaults={
+                'username': username,
+                'is_doctor': is_doc,
+            }
+        )
+
+        if not created:
+            user.is_doctor = is_doc
+            user.save()
+        return Response({"user": model_to_dict(user)})
 
 
 class SinglePatientApiView(APIView):
