@@ -66,18 +66,23 @@ class DoctorApiView(APIView):
         user_id = request.data["user_id"]
         username = request.data["username"]
         activate_code = request.data["activate_code"]
-        doctor = Doctor.objects.filter(activate_url__contains=activate_code).exists()
-        if doctor:
+        doctor = Doctor.objects.filter(activate_url__contains=activate_code)
+        if doctor.exists():
             is_doc = True
         else:
             is_doc = False
 
-        new_user = User.objects.get_or_create(
-            user_id=user_id,
-            username=username,
-            is_doctor=is_doc,
-        )
-        return Response({"user": model_to_dict(new_user[0])})
+        user = User.objects.filter(user_id=user_id)
+        if user.exists():
+            user[0].is_doctor = is_doc
+            user[0].save()
+        else:
+            user = User.objects.create(
+                user_id=user_id,
+                username=username,
+                is_doctor=is_doc,
+            )
+        return Response({"user": model_to_dict(user[0])})
 
 
 class SinglePatientApiView(APIView):
