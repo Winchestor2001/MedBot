@@ -7,7 +7,7 @@ from .models import *
 from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 from bot.data.config import BOT_TOKEN
-from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type
+from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type, generate_room_code
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param, \
     single_patient_get_param
@@ -133,7 +133,9 @@ class PatientApiView(APIView):
 
         MeetingRoom.objects.create(
             patient=new_patient,
-            doctor=new_patient.doctor
+            doctor=new_patient.doctor,
+            start_meet_date=formatted_datetime,
+            meet_code=generate_room_code()
         )
 
         data = model_to_dict(new_patient)
