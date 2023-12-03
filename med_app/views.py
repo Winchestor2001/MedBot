@@ -80,6 +80,10 @@ class DoctorApiView(APIView):
         if not created:
             user.is_doctor = is_doc
             user.save()
+
+        doctor.user = user
+        doctor.save()
+
         return Response({"user": model_to_dict(user)})
 
 
