@@ -24,6 +24,14 @@ patient_get_param = openapi.Parameter(
     required=True
 )
 
+single_patient_get_param = openapi.Parameter(
+    name='patient_id',
+    in_=openapi.IN_QUERY,
+    type=openapi.TYPE_INTEGER,
+    description='Patient ID',
+    required=True
+)
+
 doctor_get_param = openapi.Parameter(
     name='doctor_id',
     in_=openapi.IN_QUERY,
