@@ -14,6 +14,9 @@ daphne==4.0.0
 channels==4.0.0
 gunicorn==21.2.0
 requests==2.31.0
-celery==5.3.6
+celery==5.2.7
 eventlet==0.33.3
+httpcore==0.9.1
+httpx==0.13.3
+flower==2.0.1
 
