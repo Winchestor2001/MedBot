@@ -1,7 +1,7 @@
 import os
 
 from celery import Celery
-from celery.schedules import crontab
+from datetime import timedelta
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
@@ -16,6 +16,6 @@ minute = 1
 app.conf.beat_schedule = {
     f'check-meet-every-{minute}-minute': {
         'task': 'med_app.tasks.check_meet',
-        'schedule': crontab(minute=f'*/{minute}'),
+        'schedule': timedelta(minutes=minute),
     }
 }
