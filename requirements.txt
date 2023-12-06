@@ -1,4 +1,4 @@
-Django==3.0.3
+Django==4.0.3
 django-jazzmin==2.6.0
 djangorestframework==3.14.0
 django-cors-headers==4.1.0
