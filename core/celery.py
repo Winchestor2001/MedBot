@@ -1,7 +1,7 @@
 import os
 
 from celery import Celery
-from celery.schedules import crontab
+from datetime import timedelta
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
@@ -11,11 +11,11 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.autodiscover_tasks()
 
-minute = 10
+minute = 1
 
 app.conf.beat_schedule = {
     f'check-meet-every-{minute}-minute': {
-        'task': 'dparser.tasks.paser_web_1',
-        'schedule': crontab(hour=f'*/{minute}'),
+        'task': 'med_app.tasks.check_meet',
+        'schedule': timedelta(minutes=minute),
     }
 }
