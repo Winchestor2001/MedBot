@@ -180,7 +180,7 @@ class PatientResultApiView(APIView):
 
     @swagger_auto_schema(
         operation_summary="Create patient result (web)",
-        manual_parameters=[patient_result_post_param]
+        request_body=patient_result_post_param
     )
     def post(self, request):
         patient = Patient.objects.get(id=request.data["patient"])
@@ -217,7 +217,7 @@ class GetDoctorCorrectDatesAPIView(APIView):
 class DoctorCallAPIView(APIView):
     @swagger_auto_schema(
         operation_summary="Doctor call to patient (web)",
-        request_body=doctor_call_post_param
+        manual_parameters=doctor_call_post_param
     )
     def post(self, request):
         doctor = request.data["doctor_id"]
