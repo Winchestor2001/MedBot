@@ -63,6 +63,30 @@ patient_result_post_param = openapi.Schema(
     required=['patient', 'doctor', 'result_text']
 )
 
+doctor_call_post_param = [
+    openapi.Parameter(
+        name='doctor_id',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        description='Doctor ID',
+        required=True
+    ),
+    openapi.Parameter(
+        name='patient_id',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        description='Patient ID',
+        required=True
+    ),
+    openapi.Parameter(
+        name='type',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        description='Type',
+        required=True
+    ),
+]
+
 doctor_times_get_param = [
     openapi.Parameter(
         name='user',
