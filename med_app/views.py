@@ -180,7 +180,7 @@ class PatientResultApiView(APIView):
 
     @swagger_auto_schema(
         operation_summary="Create patient result (web)",
-        request_body=patient_result_post_param
+        manual_parameters=[patient_result_post_param]
     )
     def post(self, request):
         patient = Patient.objects.get(id=request.data["patient"])
