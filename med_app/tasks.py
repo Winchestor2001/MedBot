@@ -28,7 +28,7 @@ def check_meet():
         )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting/{meet.meet_code}/{hash_data}"
         send_message_with_web_app(
-            user_id=meet.patient.user.user_id,
+            user_id=meet.doctor.user.user_id,
             url=webapp_url,
             message="Soon meet start",
         )
