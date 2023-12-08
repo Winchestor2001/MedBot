@@ -1,16 +1,20 @@
 from django.forms import model_to_dict
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, get_object_or_404
+
+from core.settings import env
 from .serializers import *
 from .models import *
 from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 from bot.data.config import BOT_TOKEN
-from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type, generate_room_code
+from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type, generate_room_code, \
+    create_hash, send_message_with_web_app
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param, \
-    single_patient_get_param
+    single_patient_get_param, doctor_call_post_param
 import logging
 
 logger = logging.getLogger(__name__)
@@ -129,7 +133,7 @@ class PatientApiView(APIView):
 
         formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
         formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
-
+        
         new_patient = Patient.objects.create(
             user=User.objects.get(user_id=request.data["user"]),
             full_name=request.data["full_name"],
@@ -138,7 +142,7 @@ class PatientApiView(APIView):
             doctor=Doctor.objects.get(id=request.data["doctor_id"]),
             confirance_date=formatted_datetime,
         )
-        current_year = datetime.now().year
+        current_year = datetime.now().astimezone(timezone.pytz.timezone('Asia/Tashkent')).year
         formatted_datetime = formatted_datetime.replace(year=current_year)
         MeetingRoom.objects.create(
             patient=new_patient,
@@ -209,3 +213,27 @@ class GetDoctorCorrectDatesAPIView(APIView):
         result = check_dates(user, doctor, month, day)
 
         return Response({"STATUS": "OK", "correct_date": result})
+
+
+class DoctorCallAPIView(APIView):
+    @swagger_auto_schema(
+        operation_summary="Doctor call to patient (web)",
+        manual_parameters=doctor_call_post_param
+    )
+    def post(self, request):
+        doctor = request.data["doctor_id"]
+        patient = request.data["patient_id"]
+        data_type = request.data["type"]
+        meet = MeetingRoom.objects.get(patient__id=patient)
+        hash_data = create_hash(
+            {"doctor": doctor, "patient": patient, "type": data_type}
+        )
+        webapp_url = f"{env.str('UI_DOMEN')}/meeting/{meet.meet_code}/{hash_data}"
+        send_message_with_web_app(
+            user_id=meet.patient.user.user_id,
+            url=webapp_url,
+            message="Soon meet start",
+        )
+
+        return Response({"Call": "wait"})
+

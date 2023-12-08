@@ -17,6 +17,8 @@ SECRET_KEY = env.str('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG')
 
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
+
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 
@@ -24,7 +26,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 INSTALLED_APPS = [
     'jazzmin',
-    'daphne',
+    # 'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,8 +38,11 @@ INSTALLED_APPS = [
 
     'med_app',
     'rest_framework',
-    'channels',
+    'celery',
+    # 'channels',
     'drf_yasg',
+    # 'django_celery_beat',
+    # 'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -46,6 +51,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
 
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -71,8 +77,8 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'core.wsgi.application'
-ASGI_APPLICATION = 'core.asgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
+# ASGI_APPLICATION = 'core.asgi.application'
 
 
 # Database
@@ -98,11 +104,11 @@ DATABASES = {
 #      }
 # }
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels.layers.InMemoryChannelLayer',
+#     },
+# }
 
 
 # Password validation
@@ -129,7 +135,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tashkent'
 
 USE_I18N = True
 
@@ -169,3 +175,18 @@ CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 CELERY_ACCEPT_CONTENT = env.list("CELERY_ACCEPT_CONTENT")
 CELERY_TASK_SERIALIZER = env.str("CELERY_TASK_SERIALIZER")
 CELERY_RESULT_SERIALIZER = env.str("CELERY_RESULT_SERIALIZER")
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
