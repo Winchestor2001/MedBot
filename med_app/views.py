@@ -1,4 +1,5 @@
 from django.forms import model_to_dict
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, get_object_or_404
@@ -141,7 +142,7 @@ class PatientApiView(APIView):
             doctor=Doctor.objects.get(id=request.data["doctor_id"]),
             confirance_date=formatted_datetime,
         )
-        current_year = datetime.now().year
+        current_year = datetime.now().astimezone(timezone.pytz.timezone('Asia/Tashkent')).year
         formatted_datetime = formatted_datetime.replace(year=current_year)
         MeetingRoom.objects.create(
             patient=new_patient,
