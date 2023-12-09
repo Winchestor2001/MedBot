@@ -5,7 +5,7 @@ from aiogram.dispatcher import FSMContext
 from keyboards.inline.support_btn import keyboard, reply
 from keyboards.inline.intro import main_keyboard
 from states.Admin import Message, Admin
-from bot.loader import bot
+from loader import bot
 from connection.api_connection import get_admins_list
 from data.config import ADMINS
 
