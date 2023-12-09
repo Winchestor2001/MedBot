@@ -11,7 +11,7 @@ from keyboards.inline.admin_func import back_btn
 
 
 async def enter_ads(call: types.CallbackQuery):
-    await call.message.edit_text("Введите Контент, (video, image, gif, etc.)", reply_markup=back_btn)
+    await call.message.edit_text("Отправьте контент (video, image, gif, etc.)", reply_markup=back_btn)
     await Ads.text.set()
 
 
@@ -49,12 +49,12 @@ async def send_ads(msg: types.Message, state: FSMContext):
             send_error += 1
             continue
     if send_user == 0:
-        await bot.send_message(msg.from_user.id, 'Xech kimga yuborilmadi')
+        await bot.send_message(msg.from_user.id, 'При отправке произошло сбой :(')
     else:
         await bot.send_message(msg.from_user.id,
-                               f"📃 Отправил: до <b>{send_user + send_error}</b> пользователей\n"
+                               f"📃 Отправлено: <b>{send_user + send_error}</b>\n"
                                f"✅ Активные пользователей: <b>{send_user}</b>\n"
-                               f"❌ Забаненные пользователей: <b>{send_error}</b>\n")
+                               f"❌ Не активных пользователей: <b>{send_error}</b>\n")
     await state.finish()
 
 
