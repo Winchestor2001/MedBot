@@ -23,8 +23,6 @@ class Doctor(models.Model):
     price = models.FloatField(default=0)
     experience = models.TextField()
     services = models.TextField()
-    reviews = models.IntegerField(default=0)
-    busy = models.BooleanField(default=False)
     activate_url = models.CharField(max_length=100, default='null')
 
     def __str__(self):
@@ -87,4 +85,12 @@ class BotAdmin(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+
+class DoctorRating(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.doctor)
 

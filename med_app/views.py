@@ -93,6 +93,20 @@ class DoctorApiView(APIView):
         return Response({"user": model_to_dict(user)})
 
 
+class DoctorRatingApiView(APIView):
+
+    def get(self, request):
+        data = DoctorRating.objects.filter(doctor=request.data["doctor_id"])
+        overall_rating = 0
+        for i in data:
+            overall_rating += i.rating
+        print(overall_rating)
+        return Response({"doctors_rating": "hello"})
+
+    def post(self, request):
+        pass
+
+
 class SinglePatientApiView(APIView):
     @swagger_auto_schema(
         operation_summary="Get single patient information (web)",

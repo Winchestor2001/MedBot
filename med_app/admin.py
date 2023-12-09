@@ -39,3 +39,8 @@ class MeetingRoomAdmin(admin.ModelAdmin):
 @admin.register(BotAdmin)
 class BotAdminAdmin(admin.ModelAdmin):
     list_display = ["user", "created_at"]
+
+
+@admin.register(DoctorRating)
+class DoctorRatingAdmin(admin.ModelAdmin):
+    list_display = ["doctor", "rating"]

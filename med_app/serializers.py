@@ -16,6 +16,13 @@ class DateSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class DoctorRatingSerializer(ModelSerializer):
+
+    class Meta:
+        model = DoctorRating
+        fields = "__all__"
+
+
 class DoctorSerializer(ModelSerializer):
 
     class Meta:
