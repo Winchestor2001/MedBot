@@ -81,3 +81,10 @@ class MeetingRoom(models.Model):
         return str(self.patient)
 
 
+class BotAdmin(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.user)
+

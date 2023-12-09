@@ -35,3 +35,7 @@ class PatientResultAdmin(admin.ModelAdmin):
 class MeetingRoomAdmin(admin.ModelAdmin):
     list_display = ["patient", "doctor"]
 
+
+@admin.register(BotAdmin)
+class BotAdminAdmin(admin.ModelAdmin):
+    list_display = ["user", "created_at"]
