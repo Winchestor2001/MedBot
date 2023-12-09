@@ -66,3 +66,13 @@ async def get_my_result(user):
                 return await response.json()
             else:
                 return False
+
+
+async def get_admins_list():
+    url = "http://telecure.ru/api/v1/admins_list/"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                return await response.json()
+            else:
+                return False
