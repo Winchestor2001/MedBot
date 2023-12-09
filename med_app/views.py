@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, get_object_or_404
 
+
 from core.settings import env
 from .serializers import *
 from .models import *
@@ -236,4 +237,18 @@ class DoctorCallAPIView(APIView):
         )
 
         return Response({"Call": "wait"})
+
+
+class GetAdminsIdAPIView(APIView):
+
+    @swagger_auto_schema(
+        operation_summary="Get Admins ID (bot)",
+        operation_description="This returns admins id",
+
+    )
+    def get(self, request):
+        admins = BotAdmin.objects.all()
+        data = [item.user.user_id for item in admins]
+        return Response({"admins": data})
+
 
