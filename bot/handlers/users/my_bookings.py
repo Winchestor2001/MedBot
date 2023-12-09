@@ -15,9 +15,9 @@ async def profile(call: types.CallbackQuery, state: FSMContext):
                 "data": booking["patient"]
             })
             btn = await get_bookings_btn(booking)
-            await call.message.edit_text("Вот ваши заказы", reply_markup=btn)
+            await call.message.edit_text("Ваши записи", reply_markup=btn)
         else:
-            await call.answer(text="У вас нет заказа", show_alert=True)
+            await call.answer(text="У вас нет записей", show_alert=True)
 
 
 async def detail_booking(call: types.CallbackQuery, state: FSMContext):
@@ -28,8 +28,8 @@ async def detail_booking(call: types.CallbackQuery, state: FSMContext):
         for i in data["data"]:
             if int(i["id"]) == int(patient_id):
                 date = await detail_date(i["confirance_date"])
-                msg = f"Вот данные вашего заказ\n\n" \
-                      f"📋 Заказ ID: {i['id']}\n" \
+                msg = f"Информация о записе\n\n" \
+                      f"📋 ID Заказа: {i['id']}\n" \
                       f"👨‍⚕️Доктор: {i['doctor']['full_name'].capitalize()}\n" \
                       f"📆 Дата и время: {date}\n\n" \
                       f"Спасибо, что выбрали наш сервис! Если у вас есть какие-либо вопросы или вам " \
@@ -42,7 +42,7 @@ async def detail_booking(call: types.CallbackQuery, state: FSMContext):
                 "data": booking["patient"]
             })
             btn = await get_bookings_btn(booking)
-            await call.message.answer("Вот ваши заказы", reply_markup=btn)
+            await call.message.answer("Ваши записи", reply_markup=btn)
     elif patient_id == "exit":
         msg = f"Добро пожаловать 👋, {call.from_user.full_name}!\n\n"
         await call.message.answer(msg, reply_markup=main_keyboard)

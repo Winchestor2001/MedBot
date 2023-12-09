@@ -6,7 +6,7 @@ from keyboards.inline.intro import main_keyboard
 
 async def intro_admin(message: types.Message):
     await message.answer(f"Добро Пожаловать - Админ - {message.from_user.first_name}\n"
-                         f"Это команды, которую ты можете сделать.", reply_markup=keyboard)
+                         f"Эти команды, которых вы можете использовать.", reply_markup=keyboard)
 
 
 async def exit_admin_panel(call: types.CallbackQuery):

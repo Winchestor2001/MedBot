@@ -9,7 +9,7 @@ async def send_request_result(call: types.CallbackQuery):
     my_results = await get_my_result(call.from_user.id)
     if my_results and my_results.get("patient_results", False):
         btn = await get_results_btn(my_results)
-        await call.message.edit_text("Это ваши результаты:", reply_markup=btn)
+        await call.message.edit_text("Ваши результаты:", reply_markup=btn)
     else:
         await call.answer(text="У вас нет результат", show_alert=True)
 

@@ -10,13 +10,13 @@ from data.config import ADMINS
 async def support_text(call: types.CallbackQuery):
     await call.message.delete()
     text = f"Вы обратились в службу поддержки клиентов. " \
-           f"Если у вас есть какие-либо вопросы или проблемы, нажмите кнопку ниже"
+           f"Если у вас есть какие-либо вопросы, нажмите кнопку ниже"
     await call.message.answer(text, reply_markup=keyboard)
 
 
 async def intro_in_support(call: types.CallbackQuery):
     await call.message.delete()
-    await call.message.answer("Отправъте сообщение:")
+    await call.message.answer("Отправьте сообщение:")
     await Message.text.set()
 
 
@@ -69,7 +69,7 @@ async def get_text(call: types.CallbackQuery, state: FSMContext):
     await state.update_data({
         "user_id": user_id
     })
-    await call.message.answer(f"Ващ ответъ к {first_name}: ")
+    await call.message.answer(f"Ваш ответ к {first_name}: ")
     await Admin.text.set()
 
 
@@ -92,7 +92,7 @@ async def cancel_func_in_state(message: types.Message, state: FSMContext):
         await message.answer(msg, reply_markup=main_keyboard)
     elif message.text == "/help":
         text = f"Вы обратились в службу поддержки клиентов. " \
-               f"Если у вас есть какие-либо вопросы или проблемы, нажмите кнопку ниже"
+               f"Если у вас есть какие-либо вопросы, нажмите кнопку ниже"
         await message.answer(text, reply_markup=keyboard)
 
 

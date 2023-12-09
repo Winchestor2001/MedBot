@@ -26,12 +26,12 @@ async def bot_start(message: types.Message):
             await message.answer(msg, reply_markup=main_keyboard)
         else:
             # if is_doctor is true, inline keyboards don't show for user
-            await message.answer(msg + f"Ты доктор.")
+            await message.answer(msg + f"Вы доктор.")
 
 
 async def bot_help(message: types.Message):
     text = f"Вы обратились в службу поддержки клиентов. " \
-           f"Если у вас есть какие-либо вопросы или проблемы, нажмите кнопку ниже"
+           f"Если у вас есть какие-либо вопросы, нажмите кнопку ниже"
     await message.answer(text, reply_markup=keyboard)
 
 
