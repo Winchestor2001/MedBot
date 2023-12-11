@@ -15,7 +15,7 @@ from .utils import check_dates, filter_doctor_direction, send_message, modify_da
     create_hash, send_message_with_web_app
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param, \
-    single_patient_get_param, doctor_call_post_param
+    single_patient_get_param, doctor_call_post_param, doctor_rating_post_param, doctor_rating_post_param2
 import logging
 
 logger = logging.getLogger(__name__)
@@ -251,4 +251,18 @@ class GetAdminsIdAPIView(APIView):
         data = [item.user.user_id for item in admins]
         return Response({"admins": data})
 
+
+class DoctorRatingAPIView(APIView):
+    @swagger_auto_schema(
+        operation_summary="Doctor rating (web)",
+        request_body=doctor_rating_post_param2
+    )
+    def post(self, request):
+        doctor = Doctor.objects.get(id=request.data["doctor_id"])
+        rating = request.data["rating"]
+        DoctorRating.objects.create(
+            doctor=doctor, rating=rating
+        )
+
+        return Response({"status": "OK"}, status=201)
 

@@ -1,6 +1,7 @@
 from rest_framework.fields import ListField
 from rest_framework.serializers import ModelSerializer
 from .models import *
+from .utils import count_ratings
 
 
 class UserSerializer(ModelSerializer):
@@ -13,6 +14,13 @@ class DateSerializer(ModelSerializer):
 
     class Meta:
         model = Date
+        fields = "__all__"
+
+
+class DoctorRatingSerializer(ModelSerializer):
+
+    class Meta:
+        model = DoctorRating
         fields = "__all__"
 
 
@@ -29,9 +37,16 @@ class DoctorSerializer(ModelSerializer):
         i.is_valid()
         return i.data
 
+    @staticmethod
+    def count_doctor_rating(obj):
+        ratings = DoctorRating.objects.filter(doctor=obj)
+        result = count_ratings(ratings)
+        return result
+
     def to_representation(self, instance):
         redata = super().to_representation(instance)
         redata['date'] = [item['time_interval'] for item in self.get_doctor_date(instance)]
+        redata['rating'] = self.count_doctor_rating(instance)
         return redata
 
 
