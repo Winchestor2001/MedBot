@@ -119,8 +119,10 @@ def generate_room_code(length=6):
 
 def count_ratings(obj):
     voted_patients = len(obj)
-    doctor_all_rate = 0
-    for rate in obj:
-        doctor_all_rate += rate.rating * 20
-    return round(doctor_all_rate / 20 / voted_patients, 1)
-
+    if voted_patients > 0:
+        doctor_all_rate = 0
+        for rate in obj:
+            doctor_all_rate += rate.rating * 20
+        return round(doctor_all_rate / 20 / voted_patients, 1)
+    else:
+        return 0
