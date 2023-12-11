@@ -116,3 +116,11 @@ def generate_room_code(length=6):
 
     return room_code
 
+
+def count_ratings(obj):
+    voted_patients = len(obj)
+    doctor_all_rate = 0
+    for rate in obj:
+        doctor_all_rate += rate.rating * 20
+    return round(doctor_all_rate / 20 / voted_patients, 1)
+

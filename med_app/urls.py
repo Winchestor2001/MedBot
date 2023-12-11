@@ -12,5 +12,5 @@ urlpatterns = [
     path("patient_result/", PatientResultApiView.as_view()),
     path("call/", DoctorCallAPIView.as_view()),
     path("admins_list/", GetAdminsIdAPIView.as_view()),
-    path("doctor_rating/", DoctorRatingApiView.as_view()),
+    path("doctor_rating/", DoctorRatingAPIView.as_view()),
 ]
