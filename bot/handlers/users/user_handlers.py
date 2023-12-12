@@ -21,12 +21,12 @@ async def bot_start(message: types.Message):
     else:
         if args:
             await update_doctor(user_id=user_id, username=username, activate_code=args)
-            await message.answer(msg + f"Ты доктор.")
+            await message.answer(msg + f"\nТы доктор.")
         elif not user["user"]["is_doctor"]:
             await message.answer(msg, reply_markup=main_keyboard)
         else:
             # if is_doctor is true, inline keyboards don't show for user
-            await message.answer(msg + f"Вы доктор.")
+            await message.answer(msg + f"\nВы доктор.")
 
 
 async def bot_help(message: types.Message):
