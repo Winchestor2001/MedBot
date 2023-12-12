@@ -25,6 +25,8 @@ async def intro_in_support(call: types.CallbackQuery):
 
 async def send_admin(message: types.Message, state: FSMContext):
     await message.answer("Ваше сообщение отправлено администратору.")
+    msg = f"Добро пожаловать 👋, {message.from_user.full_name}!"
+    await message.answer(msg, reply_markup=main_keyboard)
     await state.update_data({
         "user": message.from_user,
     })
