@@ -2,7 +2,8 @@ import logging
 
 from aiogram import types, Dispatcher
 from keyboards.inline.intro import main_keyboard
-from keyboards.inline.support_btn import keyboard
+from keyboards.inline.support_btn import admin_keyboard
+from connection.api_connection import get_admins_list
 from connection.api_connection import *
 
 
@@ -30,9 +31,11 @@ async def bot_start(message: types.Message):
 
 
 async def bot_help(message: types.Message):
+    admins = await get_admins_list()
+    btn = await admin_keyboard(f"tg:user?id={admins['admins'][0]}")
     text = f"Вы обратились в службу поддержки клиентов. " \
            f"Если у вас есть какие-либо вопросы, нажмите кнопку ниже"
-    await message.answer(text, reply_markup=keyboard)
+    await message.answer(text, reply_markup=btn)
 
 
 def register_user_handlers_py(dp: Dispatcher):
