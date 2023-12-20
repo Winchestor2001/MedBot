@@ -23,31 +23,22 @@ class VideoConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        data = text_data_json['data']
-        command = data['command']
-        pre_data = {
-            'type': 'send.sdp',
-            "data": {}
-        }
-        if command == 'join':
-            pre_data['data'] = {"peer-joined": {"data": data['data']}}
+        message = text_data_json['message']
 
-        elif command == 'leave':
-            pre_data['data'] = {"leave": {"data": data['data']}}
-
+        # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
-            pre_data
+            {
+                'type': 'video.message',
+                'message': message
+            }
         )
 
-    async def send_sdp(self, event):
-        print(event)
-        receive = event['data']
-        await self.send(text_data=json.dumps(receive))
+    # Receive message from room group
+    async def video_message(self, event):
+        message = event['message']
 
-    # async def chat_message(self, event):
-    #     message = event['message']
-    #
-    #     await self.send(text_data=json.dumps({
-    #         'message': message
-    #     }))
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))

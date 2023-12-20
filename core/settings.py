@@ -26,7 +26,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 INSTALLED_APPS = [
     'jazzmin',
-    # 'daphne',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'med_app',
     'rest_framework',
     'celery',
-    # 'channels',
+    'channels',
     'drf_yasg',
     'ckeditor',
     'ckeditor_uploader',
@@ -77,32 +77,32 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
-# ASGI_APPLICATION = 'core.asgi.application'
+# WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # sqlite3
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.sqlite3',
+       'NAME': BASE_DIR / 'db.sqlite3',
+   }
+}
 
 # postgresql
-DATABASES = {
-      'default': {
-          'ENGINE': 'django.db.backends.postgresql_psycopg2',
-          'NAME': env.str("DB_NAME"),
-          'USER': env.str("DB_USER"),
-          'PASSWORD': env.str("DB_PASSWORD"),
-          'HOST': env.str("DB_HOST"),
-          'PORT': env.int("DB_PORT"),
-      }
-}
+# DATABASES = {
+#       'default': {
+#           'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#           'NAME': env.str("DB_NAME"),
+#           'USER': env.str("DB_USER"),
+#           'PASSWORD': env.str("DB_PASSWORD"),
+#           'HOST': env.str("DB_HOST"),
+#           'PORT': env.int("DB_PORT"),
+#       }
+# }
 
 # CHANNEL_LAYERS = {
 #     'default': {
