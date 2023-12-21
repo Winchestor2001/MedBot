@@ -1,5 +1,9 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.conf import settings
+
+video_frames1 = []
+video_frames2 = []
 
 
 class VideoConsumer(AsyncWebsocketConsumer):
@@ -21,11 +25,11 @@ class VideoConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        await self.encode_and_save_webm()
 
-        # Send message to room group
+    async def receive(self, text_data):
+        message = text_data
+
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -33,12 +37,28 @@ class VideoConsumer(AsyncWebsocketConsumer):
                 'message': message
             }
         )
+        await self.video_record(message)
 
-    # Receive message from room group
     async def video_message(self, event):
         message = event['message']
 
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message
         }))
+
+    async def video_record(self, video_bayt):
+        video_bayt_json = json.loads(video_bayt)
+        doctor_video_data = video_bayt_json['local'].encode('utf-8')
+        patient_video_data = video_bayt_json['remote'].encode('utf-8')
+
+        if doctor_video_data and patient_video_data:
+            video_frames1.append(doctor_video_data)
+            video_frames2.append(patient_video_data)
+
+    async def encode_and_save_webm(self):
+        if video_frames1:
+            for d in video_frames1:
+                with open(f"{self.room_name}.webm", "wb") as f:
+                    f.write(d)
+
+        video_frames1.clear()
