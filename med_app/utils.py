@@ -6,6 +6,8 @@ import json
 from aiogram.types import WebAppInfo
 import secrets
 from bot.data.config import BOT_TOKEN
+import subprocess
+import os
 
 
 def check_dates(user_data, doctor_data, month, day):
@@ -126,3 +128,24 @@ def count_ratings(obj):
         return round(doctor_all_rate / 20 / voted_patients, 1)
     else:
         return 0
+
+
+def save_recorded_video(f1, f2, output):
+    ffmpeg_command = [
+        'ffmpeg',
+        '-i', f1,
+        '-i', f2,
+        '-filter_complex',
+        '[0:v]setpts=PTS-STARTPTS,scale=qvga[a0];[1:v]setpts=PTS-STARTPTS,scale=qvga[a1];[a0][a1]xstack=inputs=2:layout=0_0|w0_0[outv];[0:a][1:a]amix=inputs=2[aout]',
+        '-map', '[outv]',
+        '-map', '[aout]',
+        '-c:v', 'libvpx',
+        '-c:a', 'libvorbis',
+        '-y',
+        output,
+    ]
+
+    subprocess.run(ffmpeg_command)
+
+    os.unlink(f1)
+    os.unlink(f2)
