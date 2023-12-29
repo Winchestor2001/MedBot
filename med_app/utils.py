@@ -131,10 +131,14 @@ def count_ratings(obj):
 
 
 def save_recorded_video(f1, f2, output):
+    current_direction = os.getcwd()
+    file1 = f"{current_direction}/media/{f1}"
+    file2 = f"{current_direction}/media/{f2}"
+    outp = f"{current_direction}/media/{output}"
     ffmpeg_command = [
         'ffmpeg',
-        '-i', f1,
-        '-i', f2,
+        '-i', file1,
+        '-i', file2,
         '-filter_complex',
         '[0:v]setpts=PTS-STARTPTS,scale=qvga[a0];[1:v]setpts=PTS-STARTPTS,scale=qvga[a1];[a0][a1]xstack=inputs=2:layout=0_0|w0_0[outv];[0:a][1:a]amix=inputs=2[aout]',
         '-map', '[outv]',
@@ -142,10 +146,17 @@ def save_recorded_video(f1, f2, output):
         '-c:v', 'libvpx',
         '-c:a', 'libvorbis',
         '-y',
-        output,
+        outp,
     ]
 
     subprocess.run(ffmpeg_command)
+    send_to_telegram_and_delete_record_video(f1, f2)
 
-    os.unlink(f1)
-    os.unlink(f2)
+
+def send_to_telegram_and_delete_record_video(f1, f2):
+    current_direction = os.getcwd()
+    try:
+        os.unlink(f"{current_direction}/media/{f1}")
+        os.unlink(f"{current_direction}/media/{f2}")
+    except:
+        pass
