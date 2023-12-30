@@ -149,7 +149,11 @@ def save_recorded_video(f1, f2, output):
         outp,
     ]
 
-    subprocess.run(ffmpeg_command)
+    try:
+        subprocess.run(ffmpeg_command)
+    except Exception as e:
+        print("Error in ffmpeg")
+
     send_to_telegram_and_delete_record_video(f1, f2)
 
 
@@ -159,4 +163,4 @@ def send_to_telegram_and_delete_record_video(f1, f2):
         os.unlink(f"{current_direction}/media/{f1}")
         os.unlink(f"{current_direction}/media/{f2}")
     except:
-        pass
+        print("error in delete files")
