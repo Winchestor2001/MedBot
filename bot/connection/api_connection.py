@@ -76,3 +76,13 @@ async def get_admins_list():
                 return await response.json()
             else:
                 return False
+
+
+async def get_result_pdf(patient):
+    url = API_URL + "/api/v1/patient_result_pdf"
+    data = {
+        "patient": patient
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=data) as response:
+            return await response.json()

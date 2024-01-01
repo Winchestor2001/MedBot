@@ -1,3 +1,4 @@
+import os
 from django.forms import model_to_dict
 from django.utils import timezone
 from rest_framework.response import Response
@@ -11,7 +12,7 @@ from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 from bot.data.config import BOT_TOKEN
 from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type, generate_room_code, \
-    create_hash, send_message_with_web_app, save_recorded_video
+    create_hash, send_message_with_web_app, create_pdf, save_recorded_video
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param, \
     single_patient_get_param, doctor_call_post_param, doctor_rating_post_param, doctor_rating_post_param2
@@ -179,7 +180,7 @@ class PatientResultApiView(APIView):
     )
     def get(self, request):
         user = request.data["user"]
-        patient = Patient.objects.filter(user__user_id=user)
+        patient = PatientResult.objects.filter(patient_id__user_id=user)
         serializer = PatientResultSerializer(data=patient, many=True)
         serializer.is_valid()
         return Response({'patient_results': serializer.data})
@@ -200,6 +201,24 @@ class PatientResultApiView(APIView):
         )
 
         return Response({"Patient result": model_to_dict(patient_result)})
+
+
+class GetPatientResultPDF(APIView):
+    def get(self, request):
+
+        patient = request.data["patient"]
+        try:
+            result = PatientResult.objects.get(id=patient)
+        except:
+            return Response({"patient_result": "There no result belong this ID"})
+
+        p = f"{result.patient.user.user_id}_{result.id}"
+        output_path = f".\media\pdf_results\{p}.pdf"
+        exist = os.path.exists(output_path)
+        if not exist:
+            create_pdf(result, output_path)
+        url = f"{env.str('API_URL')}/media/pdf_results/{p}.pdf"
+        return Response({"patient_result_pdf": url})
 
 
 class GetDoctorCorrectDatesAPIView(APIView):
