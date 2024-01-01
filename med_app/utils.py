@@ -1,3 +1,8 @@
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.lib import colors
 from datetime import datetime, timedelta
 import base64
 import requests
@@ -160,3 +165,34 @@ def send_to_telegram_and_delete_record_video(f1, f2):
         os.unlink(f"{current_direction}/media/{f2}")
     except:
         pass
+
+
+def create_pdf(data, output_path):
+    left_margin = 0.5 * inch
+    right_margin = 0.5 * inch
+    top_margin = 0.4 * inch
+    patient = data.patient.full_name
+    doctor = data.patient.doctor.full_name
+    body = data.result_text
+    date = data.patient.confirance_date
+
+    doc = SimpleDocTemplate(output_path, pagesize=letter,
+                            leftMargin=left_margin, rightMargin=right_margin,
+                            topMargin=top_margin)
+
+    article = f"<b><font size='24' color='indigo'>TeleCure.ru</font></b>\n\n" \
+              f"<hr></hr>" \
+              f"<b>Patient</b>: {patient}\n" \
+              f"<b>Doctor</b>: {doctor}\n" \
+              f"<b>Diagnosis</b>: {body}\n" \
+              f"<em><b>Date</b>: {date}</em>"
+
+    styles = getSampleStyleSheet()
+
+    content = []
+    paragraphs = article.split('\n')
+    for paragraph in paragraphs:
+        content.append(Paragraph(paragraph, styles['BodyText']))
+        content.append(Spacer(1, 4))
+
+    doc.build(content)
