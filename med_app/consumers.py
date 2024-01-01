@@ -24,18 +24,17 @@ class VideoConsumer1(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        await self.encode_and_save_webm()
 
     async def receive(self, bytes_data):
         message = bytes_data
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'video.message',
-                'message': message
-            }
-        )
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         'type': 'video.message',
+        #         'message': message
+        #     }
+        # )
         await self.video_record(message)
 
     async def video_message(self, event):
@@ -47,11 +46,6 @@ class VideoConsumer1(AsyncWebsocketConsumer):
         current_direction = os.getcwd()
         with open(f"{current_direction}/media/{self.room_name}_1.webm", "ab") as f:
             f.write(video_bayt)
-
-    async def encode_and_save_webm(self):
-        save_recorded_video(
-            f"{self.room_name}_1.webm", f"{self.room_name}_2.webm", f"recorded_{self.room_name}.webm"
-        )
 
 
 class VideoConsumer2(AsyncWebsocketConsumer):
@@ -75,13 +69,13 @@ class VideoConsumer2(AsyncWebsocketConsumer):
     async def receive(self, bytes_data):
         message = bytes_data
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'video.message',
-                'message': message
-            }
-        )
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         'type': 'video.message',
+        #         'message': message
+        #     }
+        # )
         await self.video_record(message)
 
     async def video_message(self, event):

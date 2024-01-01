@@ -154,7 +154,11 @@ def save_recorded_video(f1, f2, output):
         outp,
     ]
 
-    subprocess.run(ffmpeg_command)
+    try:
+        subprocess.run(ffmpeg_command)
+    except Exception as e:
+        print("Error in ffmpeg")
+
     send_to_telegram_and_delete_record_video(f1, f2)
 
 
@@ -196,3 +200,4 @@ def create_pdf(data, output_path):
         content.append(Spacer(1, 4))
 
     doc.build(content)
+    print("error in delete files")
