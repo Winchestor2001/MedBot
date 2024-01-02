@@ -21,7 +21,7 @@ async def get_request_result(call: types.CallbackQuery):
     patient_id = call.data.split(":")[1]
     result = await get_result_pdf(patient_id)
     if result["patient_result_pdf"]:
-        await bot.send_document(call.from_user.id, result["patient_result_pdf"])
+        await call.message.answer_document(call.from_user.id, result["patient_result_pdf"])
     elif result["patient_result"]:
         await call.message.answer(result["patient_result"])
 
