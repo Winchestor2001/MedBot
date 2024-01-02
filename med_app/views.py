@@ -212,7 +212,7 @@ class GetPatientResultPDF(APIView):
         except:
             return Response({"patient_result": "There no result belong this ID"})
 
-        p = f"{result.patient}_{result.id}"
+        p = f"{result.patient.full_name}_{result.id}"
         output_path = f"./media/pdf_results/{p}.pdf"
         exist = os.path.exists(output_path)
         if not exist:
