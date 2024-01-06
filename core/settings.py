@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from environs import Env
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = Env()
@@ -21,12 +20,11 @@ CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
-
 # Application definition
 
 INSTALLED_APPS = [
     'jazzmin',
-    # 'daphne',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,9 +75,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
-# ASGI_APPLICATION = 'core.asgi.application'
-
+# WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -104,12 +101,11 @@ DATABASES = {
 #      }
 # }
 
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels.layers.InMemoryChannelLayer',
-#     },
-# }
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -129,7 +125,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -140,7 +135,6 @@ TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -176,7 +170,6 @@ CELERY_ACCEPT_CONTENT = env.list("CELERY_ACCEPT_CONTENT")
 CELERY_TASK_SERIALIZER = env.str("CELERY_TASK_SERIALIZER")
 CELERY_RESULT_SERIALIZER = env.str("CELERY_RESULT_SERIALIZER")
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -190,3 +183,13 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+AWS_ACCESS_KEY_ID = 'AKIATLGAOXRLSD7SKVUE '
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'telecure-cloud'
+AWS_S3_SIGNATURE_NAME = 's3v4',
+AWS_S3_REGION_NAME = 'eu-north-1'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_VERITY = True
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
