@@ -117,6 +117,22 @@ def send_message_with_web_app(user_id, url, message):
     return response.json()
 
 
+def send_video_api(group_id, file_path):
+    params = {
+        "chat_id": group_id
+    }
+
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo"
+
+    with open(file_path, "rb") as video_file:
+        files = {"video": video_file}
+        response = requests.post(url, params=params, files=files)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return "There some problem in send message video, (file's size big than standard)"
+
+
 def generate_room_code(length=6):
     characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     room_code = ''.join(secrets.choice(characters) for _ in range(length))
