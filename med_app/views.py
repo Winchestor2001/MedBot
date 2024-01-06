@@ -1,9 +1,9 @@
+import os
 from django.forms import model_to_dict
 from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, get_object_or_404
-
 
 from core.settings import env
 from .serializers import *
@@ -12,11 +12,16 @@ from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 from bot.data.config import BOT_TOKEN
 from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type, generate_room_code, \
-    create_hash, send_message_with_web_app
+    create_hash, send_message_with_web_app, create_pdf, save_recorded_video
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param, \
-    single_patient_get_param, doctor_call_post_param
+    single_patient_get_param, doctor_call_post_param, doctor_rating_post_param, doctor_rating_post_param2
 import logging
+from django.views import View
+import os
+from mimetypes import guess_type
+from wsgiref.util import FileWrapper
+from django.http import StreamingHttpResponse
 
 logger = logging.getLogger(__name__)
 
@@ -134,7 +139,7 @@ class PatientApiView(APIView):
 
         formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
         formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
-        
+
         new_patient = Patient.objects.create(
             user=User.objects.get(user_id=request.data["user"]),
             full_name=request.data["full_name"],
@@ -175,7 +180,7 @@ class PatientResultApiView(APIView):
     )
     def get(self, request):
         user = request.data["user"]
-        patient = Patient.objects.filter(user__user_id=user)
+        patient = PatientResult.objects.filter(patient_id__user_id=user)
         serializer = PatientResultSerializer(data=patient, many=True)
         serializer.is_valid()
         return Response({'patient_results': serializer.data})
@@ -196,6 +201,24 @@ class PatientResultApiView(APIView):
         )
 
         return Response({"Patient result": model_to_dict(patient_result)})
+
+
+class GetPatientResultPDF(APIView):
+    def get(self, request):
+
+        patient = request.data["patient"]
+        try:
+            result = PatientResult.objects.get(id=patient)
+        except:
+            return Response({"patient_result": "There no result belong this ID"})
+
+        p = f"{result.patient.full_name}_{result.id}"
+        output_path = f"./media/pdf_results/{p}.pdf"
+        exist = os.path.exists(output_path)
+        if not exist:
+            create_pdf(result, output_path)
+        url = f"{env.str('API_URL')}/media/pdf_results/{p}.pdf"
+        return Response({"patient_result_pdf": url})
 
 
 class GetDoctorCorrectDatesAPIView(APIView):
@@ -252,3 +275,61 @@ class GetAdminsIdAPIView(APIView):
         return Response({"admins": data})
 
 
+class DoctorRatingAPIView(APIView):
+    @swagger_auto_schema(
+        operation_summary="Doctor rating (web)",
+        request_body=doctor_rating_post_param2
+    )
+    def post(self, request):
+        doctor = Doctor.objects.get(id=request.data["doctor_id"])
+        rating = request.data["rating"]
+        DoctorRating.objects.create(
+            doctor=doctor, rating=rating
+        )
+
+        return Response({"status": "OK"}, status=201)
+
+
+class EndRecordAPIView(APIView):
+    def get(self, request):
+        room_name = request.GET.get('room_name')
+        save_recorded_video(
+            f"{room_name}_1.webm", f"{room_name}_2.webm", f"recorded_{room_name}.webm"
+        )
+        return Response({"status": "OK"}, status=200)
+
+
+class VideoStreamDoctorView(View):
+    def get(self, request, room_name):
+        current_direction = os.getcwd()
+        video_path = f"{current_direction}/media/{room_name}_1.webm"
+
+        content_type, _ = guess_type(video_path)
+        content_type = content_type or 'application/octet-stream'
+
+        video_file = open(video_path, 'rb')
+        file_wrapper = FileWrapper(video_file)
+
+        response = StreamingHttpResponse(file_wrapper, content_type=content_type)
+
+        response['Content-Disposition'] = f'attachment; filename="{os.path.basename(video_path)}"'
+
+        return response
+
+
+class VideoStreamPatientView(View):
+    def get(self, request, room_name):
+        current_direction = os.getcwd()
+        video_path = f"{current_direction}/media/{room_name}_2.webm"
+
+        content_type, _ = guess_type(video_path)
+        content_type = content_type or 'application/octet-stream'
+
+        video_file = open(video_path, 'rb')
+        file_wrapper = FileWrapper(video_file)
+
+        response = StreamingHttpResponse(file_wrapper, content_type=content_type)
+
+        response['Content-Disposition'] = f'attachment; filename="{os.path.basename(video_path)}"'
+
+        return response

@@ -6,10 +6,11 @@ translator = Translator()
 
 
 async def change_format_date(date):
-    input_datetime = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+    input_datetime = datetime.strptime(date, "%Y-%m-%d")
     day = input_datetime.day
     month = input_datetime.strftime("%B")
-    changed_type = f"{day} {month}"
+    year = input_datetime.strftime("%Y")
+    changed_type = f"{day} {month}, {year}"
     lang_changed = translator.translate(changed_type, dest='ru').text
     return lang_changed
 

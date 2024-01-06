@@ -3,6 +3,7 @@ import datetime
 from django.db import models
 from uuid import uuid4
 from bot.data.config import BOT_URL
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class User(models.Model):
@@ -21,10 +22,7 @@ class Doctor(models.Model):
     avatar = models.ImageField(upload_to='doctor_avatar/')
     direction = models.CharField(max_length=255)
     price = models.FloatField(default=0)
-    experience = models.TextField()
-    services = models.TextField()
-    reviews = models.IntegerField(default=0)
-    busy = models.BooleanField(default=False)
+    about = RichTextUploadingField(blank=True, null=True)
     activate_url = models.CharField(max_length=100, default='null')
 
     def __str__(self):
@@ -87,4 +85,12 @@ class BotAdmin(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+
+class DoctorRating(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    rating = models.DecimalField(max_digits=5, decimal_places=1)
+
+    def __str__(self):
+        return str(self.doctor)
 

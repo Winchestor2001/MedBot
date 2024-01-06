@@ -2,6 +2,7 @@ from aiogram import types, Dispatcher
 from connection.api_connection import *
 from keyboards.inline.results import get_results_btn
 from keyboards.inline.intro import main_keyboard
+from loader import bot
 
 
 async def send_request_result(call: types.CallbackQuery):
@@ -15,9 +16,17 @@ async def send_request_result(call: types.CallbackQuery):
 
 
 async def get_request_result(call: types.CallbackQuery):
+    await call.answer()
     await call.message.delete()
-    await call.message.answer_document("https://css4.pub/2015/icelandic/dictionary.pdf",
-                                       caption='Result')
+    patient_id = call.data.split(":")[1]
+    result = await get_result_pdf(patient_id)
+    if result["patient_result_pdf"]:
+        await call.message.answer_document(result["patient_result_pdf"])
+    elif result["patient_result"]:
+        await call.message.answer(result["patient_result"])
+
+    msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
+    await call.message.answer(msg, reply_markup=main_keyboard)
 
 
 async def cancel_result(call: types.CallbackQuery):

@@ -1,3 +1,8 @@
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.lib import colors
 from datetime import datetime, timedelta
 import base64
 import requests
@@ -6,6 +11,8 @@ import json
 from aiogram.types import WebAppInfo
 import secrets
 from bot.data.config import BOT_TOKEN
+import subprocess
+import os
 
 
 def check_dates(user_data, doctor_data, month, day):
@@ -116,3 +123,81 @@ def generate_room_code(length=6):
 
     return room_code
 
+
+def count_ratings(obj):
+    voted_patients = len(obj)
+    if voted_patients > 0:
+        doctor_all_rate = 0
+        for rate in obj:
+            doctor_all_rate += rate.rating * 20
+        return round(doctor_all_rate / 20 / voted_patients, 1)
+    else:
+        return 0
+
+
+def save_recorded_video(f1, f2, output):
+    current_direction = os.getcwd()
+    file1 = f"{current_direction}/media/{f1}"
+    file2 = f"{current_direction}/media/{f2}"
+    outp = f"{current_direction}/media/{output}"
+    ffmpeg_command = [
+        'ffmpeg',
+        '-i', file1,
+        '-i', file2,
+        '-filter_complex',
+        '[0:v]setpts=PTS-STARTPTS,scale=qvga[a0];[1:v]setpts=PTS-STARTPTS,scale=qvga[a1];[a0][a1]xstack=inputs=2:layout=0_0|w0_0[outv];[0:a][1:a]amix=inputs=2[aout]',
+        '-map', '[outv]',
+        '-map', '[aout]',
+        '-c:v', 'libvpx',
+        '-c:a', 'libvorbis',
+        '-y',
+        outp,
+    ]
+
+    try:
+        subprocess.run(ffmpeg_command)
+    except Exception as e:
+        print("Error in ffmpeg")
+
+    send_to_telegram_and_delete_record_video(f1, f2)
+
+
+def send_to_telegram_and_delete_record_video(f1, f2):
+    current_direction = os.getcwd()
+    try:
+        os.unlink(f"{current_direction}/media/{f1}")
+        os.unlink(f"{current_direction}/media/{f2}")
+    except:
+        pass
+
+
+def create_pdf(data, output_path):
+    left_margin = 0.5 * inch
+    right_margin = 0.5 * inch
+    top_margin = 0.4 * inch
+    patient = data.patient.full_name
+    doctor = data.patient.doctor.full_name
+    body = data.result_text
+    date = data.patient.confirance_date
+
+    doc = SimpleDocTemplate(output_path, pagesize=letter,
+                            leftMargin=left_margin, rightMargin=right_margin,
+                            topMargin=top_margin)
+
+    article = f"<b><font size='24' color='indigo'>TeleCure.ru</font></b>\n\n" \
+              f"<hr></hr>" \
+              f"<b>Patient</b>: {patient}\n" \
+              f"<b>Doctor</b>: {doctor}\n" \
+              f"<b>Diagnosis</b>: {body}\n" \
+              f"<em><b>Date</b>: {date}</em>"
+
+    styles = getSampleStyleSheet()
+
+    content = []
+    paragraphs = article.split('\n')
+    for paragraph in paragraphs:
+        content.append(Paragraph(paragraph, styles['BodyText']))
+        content.append(Spacer(1, 4))
+
+    doc.build(content)
+    print("error in delete files")

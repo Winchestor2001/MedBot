@@ -87,6 +87,32 @@ doctor_call_post_param = [
     ),
 ]
 
+doctor_rating_post_param = [
+    openapi.Parameter(
+        name='doctor_id',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        description='Doctor ID',
+        required=True
+    ),
+    openapi.Parameter(
+        name='rating',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        description='Rating',
+        required=True
+    ),
+]
+
+doctor_rating_post_param2 = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'doctor_id': openapi.Schema(type=openapi.TYPE_INTEGER),
+        'rating': openapi.Schema(type=openapi.TYPE_INTEGER),
+    },
+    required=['doctor_id', 'rating']
+)
+
 doctor_times_get_param = [
     openapi.Parameter(
         name='user',
