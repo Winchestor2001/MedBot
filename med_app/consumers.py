@@ -1,9 +1,11 @@
 import json
 import os
 
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.conf import settings
 
+from med_app.models import ChatStorage, Patient, Doctor
 from med_app.utils import save_recorded_video
 
 
@@ -90,32 +92,44 @@ class VideoConsumer2(AsyncWebsocketConsumer):
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.users_count = 0
+
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
 
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-
+        self.users_count += 1
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Leave room group
+        self.users_count -= 1
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
-    # Receive message from WebSocket
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
 
-        # Send message to room group
+        await self.save_message_to_database(text_data_json)
         await self.channel_layer.group_send(
             self.room_group_name, {"type": "chat.message", "message": message}
         )
 
-    # Receive message from room group
     async def chat_message(self, event):
         message = event["message"]
 
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({"message": message}))
+
+    @database_sync_to_async
+    def save_message_to_database(self, text_data_json):
+        message = text_data_json["message"]
+        image = text_data_json.get("image_bayt", None)
+        ChatStorage.objects.create(
+            patient=Patient.objects.get(id=text_data_json['patient']),
+            doctor=Doctor.objects.get(id=text_data_json['doctor']),
+            message=message,
+            image=image
+        )

@@ -44,3 +44,9 @@ class BotAdminAdmin(admin.ModelAdmin):
 @admin.register(DoctorRating)
 class DoctorRatingAdmin(admin.ModelAdmin):
     list_display = ["doctor", "rating"]
+
+
+@admin.register(ChatStorage)
+class ChatStorageAdmin(admin.ModelAdmin):
+    list_display = ["doctor", "patient", "created_at"]
+
