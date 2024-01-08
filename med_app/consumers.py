@@ -1,9 +1,11 @@
 import json
 import os
 
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.conf import settings
 
+from med_app.models import ChatStorage, Patient, Doctor
 from med_app.utils import save_recorded_video
 
 
@@ -111,6 +113,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
 
+        await self.save_message_to_database(text_data_json)
         await self.channel_layer.group_send(
             self.room_group_name, {"type": "chat.message", "message": message}
         )
@@ -119,3 +122,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event["message"]
 
         await self.send(text_data=json.dumps({"message": message}))
+
+    @database_sync_to_async
+    def save_message_to_database(self, text_data_json):
+        message = text_data_json["message"]
+        image = text_data_json.get("image_bayt", None)
+        ChatStorage.objects.create(
+            patient=Patient.objects.get(id=text_data_json['patient']),
+            doctor=Doctor.objects.get(id=text_data_json['doctor']),
+            message=message,
+            image=image
+        )
