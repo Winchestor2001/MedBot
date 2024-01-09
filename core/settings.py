@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'med_app',
     'rest_framework',
     'celery',
-    # 'channels',
+    'channels',
     'drf_yasg',
     'ckeditor',
     'ckeditor_uploader',
