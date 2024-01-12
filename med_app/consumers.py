@@ -1,5 +1,7 @@
+import base64
 import json
 import os
+import time
 
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -7,6 +9,8 @@ from django.conf import settings
 
 from med_app.models import ChatStorage, Patient, Doctor
 from med_app.utils import save_recorded_video
+from django.core.files.base import ContentFile
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class VideoConsumer1(AsyncWebsocketConsumer):
@@ -126,7 +130,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_message_to_database(self, text_data_json):
         message = text_data_json["message"]
-        image = text_data_json.get("image_bayt", None)
+        image = text_data_json.get("image_bytes", None)
+        if image:
+            image_content = ContentFile(base64.b64decode(image), name='image.png')
+            storage = S3Boto3Storage()
+            image_path = f'media/{text_data_json["patient"]}/{text_data_json["doctor"]}/'
+            image_filename = f'{image_path}image_{time.time()}.png'
+            storage.save(image_filename, image_content)
+            image = image_filename
+
         ChatStorage.objects.create(
             patient=Patient.objects.get(id=text_data_json['patient']),
             doctor=Doctor.objects.get(id=text_data_json['doctor']),
