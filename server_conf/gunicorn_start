@@ -1,0 +1,29 @@
+#!/bin/bash
+
+NAME='medbot'
+DJANGODIR=/home/MedBotApp
+SOCKFILE=/webapps/jatte/run/gunicorn.sock
+USER=root
+GROUP=root
+NUM_WORKERS=3
+DJANGO_SETTINGS_MODULE=core.settings
+DJANGO_ASGI_MODULE=core.asgi
+TIMEOUT=120
+
+cd $DJANGODIR
+source ./venv/bin/activate
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DJANGODIR:$PYTHONPATH
+
+RUNDIR=$(dirname $SOCKFILE)
+test -d $RUNDIR || mkdir -p $RUNDIR
+
+exec ./venv/bin/gunicorn ${DJANGO_ASGI_MODULE}:application \
+--name $NAME \
+--workers $NUM_WORKERS \
+--timeout $TIMEOUT \
+--user=$USER --group=$GROUP \
+--bind=unix:$SOCKFILE \
+--log-level=debug \
+--log-file=- \
+-k uvicorn.workers.UvicornWorker
