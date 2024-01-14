@@ -1,6 +1,8 @@
 import os
 from django.forms import model_to_dict
 from django.utils import timezone
+from datetime import datetime
+import pytz
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, get_object_or_404
@@ -136,7 +138,7 @@ class PatientApiView(APIView):
         selected_date = request.data['conference_date']["selectedDate"]
         selected_time = request.data['conference_date']["selectedTime"]
         selected_month = request.data['conference_date']["selectedMonth"]
-        start_time_str = selected_time.replace(' ', '').split(' - ')[0].strip()
+        start_time_str = selected_time.replace(' ', '').split('-')[0].strip()
 
         formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
         formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
@@ -149,7 +151,7 @@ class PatientApiView(APIView):
             doctor=Doctor.objects.get(id=request.data["doctor_id"]),
             confirance_date=formatted_datetime,
         )
-        current_year = datetime.now().astimezone(timezone.pytz.timezone('Asia/Tashkent')).year
+        current_year = datetime.now(pytz.timezone('Asia/Tashkent')).year
         formatted_datetime = formatted_datetime.replace(year=current_year)
         MeetingRoom.objects.create(
             patient=new_patient,
@@ -176,7 +178,7 @@ class PatientApiView(APIView):
             doctor=new_patient.doctor,
             bill_id=bill_id,
             amount=new_patient.doctor.price,
-            chat_code=generate_room_code()
+            pay_url=pay_url
         )
 
         return Response({"payment_url": pay_url})
@@ -373,11 +375,15 @@ class PaymentNotification(APIView):
     def post(self, request):
         order_id = request.data['order_id']
         patient_payment = PatientPayment.objects.get(bill_id=order_id)
-        chat = ChatStorage.objects.get(patient=patient_payment.patient)
+        chat = ChatStorage.objects.create(
+            doctor=patient_payment.doctor,
+            patient=patient_payment.patient,
+            chat_code=generate_room_code()
+        )
         hash_data = create_hash(
             {"doctor": patient_payment.doctor.id, "patient": patient_payment.patient.id, "type": 'patient'}
         )
-        webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/'{chat.chat_code}'/{hash_data}"
+        webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{chat.chat_code}/{hash_data}"
         send_message_with_web_app(
             user_id=patient_payment.patient.user.user_id,
             url=webapp_url,

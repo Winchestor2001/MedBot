@@ -102,7 +102,7 @@ def send_message_with_web_app(user_id, url, message):
     web = WebAppInfo(url=f"{url}")
     inline_keyboard = {
         'inline_keyboard': [
-            [{'text': 'Go Meeting', 'web_app': web.__dict__['_values']}]
+            [{'text': 'Go', 'web_app': web.__dict__['_values']}]
         ]
     }
     inline_keyboard_json = json.dumps(inline_keyboard)

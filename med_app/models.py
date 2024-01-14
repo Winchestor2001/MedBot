@@ -114,6 +114,7 @@ class PatientPayment(models.Model):
     paid = models.BooleanField(default=False)
     amount = models.IntegerField(default=0)
     bill_id = models.CharField(max_length=100, blank=True, null=True)
+    pay_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.patient} - {self.doctor}"
