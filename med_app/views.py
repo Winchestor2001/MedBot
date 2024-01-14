@@ -136,7 +136,7 @@ class PatientApiView(APIView):
         selected_date = request.data['conference_date']["selectedDate"]
         selected_time = request.data['conference_date']["selectedTime"]
         selected_month = request.data['conference_date']["selectedMonth"]
-        start_time_str = selected_time.split(' - ')[0].strip()
+        start_time_str = selected_time.replace(' ', '').split(' - ')[0].strip()
 
         formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
         formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
@@ -175,10 +175,11 @@ class PatientApiView(APIView):
             patient=new_patient,
             doctor=new_patient.doctor,
             bill_id=bill_id,
-            amount=new_patient.doctor.price
+            amount=new_patient.doctor.price,
+            chat_code=generate_room_code()
         )
 
-        return Response({"patient": model_to_dict(new_patient), "pay_invoice": pay_url})
+        return Response({"payment_url": pay_url})
 
 
 class PatientResultApiView(APIView):
@@ -370,7 +371,18 @@ class VideoStreamPatientView(View):
 
 class PaymentNotification(APIView):
     def post(self, request):
-        print(request.data)
+        order_id = request.data['order_id']
+        patient_payment = PatientPayment.objects.get(bill_id=order_id)
+        chat = ChatStorage.objects.get(patient=patient_payment.patient)
+        hash_data = create_hash(
+            {"doctor": patient_payment.doctor.id, "patient": patient_payment.patient.id, "type": 'patient'}
+        )
+        webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/'{chat.chat_code}'/{hash_data}"
+        send_message_with_web_app(
+            user_id=patient_payment.patient.user.user_id,
+            url=webapp_url,
+            message="Open chat",
+        )
 
         return Response({"status": "received"}, status=200)
 
