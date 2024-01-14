@@ -23,6 +23,7 @@ class Doctor(models.Model):
     direction = models.CharField(max_length=255)
     price = models.FloatField(default=0)
     about = RichTextUploadingField(blank=True, null=True)
+    balance = models.IntegerField(default=0)
     activate_url = models.CharField(max_length=100, default='null')
 
     def __str__(self):
@@ -106,4 +107,13 @@ class ChatStorage(models.Model):
         return f"{self.doctor} - {self.patient}"
 
 
+class PatientPayment(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    paid = models.BooleanField(default=False)
+    amount = models.IntegerField(default=0)
+    bill_id = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.patient} - {self.doctor}"
 

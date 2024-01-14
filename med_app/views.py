@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, get_object_or_404
 
 from core.settings import env
+from .payment_system import create_invoice
 from .serializers import *
 from .models import *
 from datetime import datetime
@@ -168,7 +169,16 @@ class PatientApiView(APIView):
               f"свяжитесь с нами. 📞"
         user_id = int(request.data["user"])
         send_message(BOT_TOKEN, user_id, msg)
-        return Response({"patient": model_to_dict(new_patient)})
+        pay_url, bill_id = create_invoice(str(new_patient.doctor.price))
+
+        PatientPayment.objects.create(
+            patient=new_patient,
+            doctor=new_patient.doctor,
+            bill_id=bill_id,
+            amount=new_patient.doctor.price
+        )
+
+        return Response({"patient": model_to_dict(new_patient), "pay_invoice": pay_url})
 
 
 class PatientResultApiView(APIView):
@@ -262,6 +272,29 @@ class DoctorCallAPIView(APIView):
         return Response({"Call": "wait"})
 
 
+class ChatAPIView(APIView):
+    @swagger_auto_schema(
+        operation_summary="Chat (web)",
+        manual_parameters=doctor_call_post_param
+    )
+    def post(self, request):
+        doctor = request.data["doctor_id"]
+        patient = request.data["patient_id"]
+        data_type = request.data["type"]
+        meet = MeetingRoom.objects.get(patient__id=patient)
+        hash_data = create_hash(
+            {"doctor": doctor, "patient": patient, "type": data_type}
+        )
+        webapp_url = f"{env.str('UI_DOMEN')}/meeting/{meet.meet_code}/{hash_data}"
+        send_message_with_web_app(
+            user_id=meet.patient.user.user_id,
+            url=webapp_url,
+            message="Soon meet start",
+        )
+
+        return Response({"Call": "wait"})
+
+
 class GetAdminsIdAPIView(APIView):
 
     @swagger_auto_schema(
@@ -333,3 +366,11 @@ class VideoStreamPatientView(View):
         response['Content-Disposition'] = f'attachment; filename="{os.path.basename(video_path)}"'
 
         return response
+
+
+class PaymentNotification(APIView):
+    def post(self, request):
+        print(request.data)
+
+        return Response({"status": "received"}, status=200)
+

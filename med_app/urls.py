@@ -18,4 +18,6 @@ urlpatterns = [
 
     path("video_stream_doctor/<str:room_name>/", VideoStreamDoctorView.as_view()),
     path("video_stream_patient/<str:room_name>/", VideoStreamPatientView.as_view()),
+
+    path('payment_notification/', PaymentNotification.as_view())
 ]
