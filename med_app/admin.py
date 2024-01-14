@@ -50,3 +50,8 @@ class DoctorRatingAdmin(admin.ModelAdmin):
 class ChatStorageAdmin(admin.ModelAdmin):
     list_display = ["doctor", "patient", "created_at"]
 
+
+@admin.register(PatientPayment)
+class PatientPaymentAdmin(admin.ModelAdmin):
+    list_display = ["doctor", "patient", "paid"]
+
