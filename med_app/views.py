@@ -392,3 +392,13 @@ class PaymentNotification(APIView):
 
         return Response({"status": "received"}, status=200)
 
+
+class GetDoctorChatsAPI(APIView):
+    def get(self, request):
+        doctor = request.GET.get('doctor')
+        chats = ChatStorage.objects.filter(doctor=doctor)
+        serializer = ChatSerializer(data=chats, many=True)
+        serializer.is_valid()
+        return Response({'chats': serializer.data})
+
+

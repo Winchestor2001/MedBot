@@ -64,3 +64,9 @@ class PatientResultSerializer(ModelSerializer):
     class Meta:
         model = PatientResult
         exclude = ('doctor',)
+
+
+class ChatSerializer(ModelSerializer):
+    class Meta:
+        model = ChatStorage
+        exclude = '__all__'
