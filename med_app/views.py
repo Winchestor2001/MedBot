@@ -395,10 +395,21 @@ class PaymentNotification(APIView):
 
 class GetDoctorChatsAPI(APIView):
     def get(self, request):
-        doctor = Doctor.objects.get(user__user_id=request.GET.get('user_id'))
+        doctor = Doctor.objects.get(user__user_id=request.data.get('user_id'))
         chats = ChatStorage.objects.filter(doctor=doctor)
         serializer = ChatSerializer(data=chats, many=True)
         serializer.is_valid()
         return Response({'chats': serializer.data})
 
+
+class AboutDoctorAPI(APIView):
+    @swagger_auto_schema(
+        operation_summary="Get doctor information (web)",
+        operation_description="This returns doctor information",
+        manual_parameters=[doctor_get_param]
+    )
+    def get(self, request):
+        data = Doctor.objects.get(user__user_id=request.data.get("user_id"))
+        serializer = DoctorSerializer(instance=data)
+        return Response({"doctors": serializer.data})
 

@@ -67,6 +67,8 @@ class PatientResultSerializer(ModelSerializer):
 
 
 class ChatSerializer(ModelSerializer):
+    patient = PatientSerializer()
+
     class Meta:
         model = ChatStorage
-        exclude = '__all__'
+        fields = '__all__'

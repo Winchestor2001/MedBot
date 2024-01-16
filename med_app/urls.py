@@ -22,4 +22,5 @@ urlpatterns = [
     path('payment_notification/', PaymentNotification.as_view()),
 
     path('doctor_chats/', GetDoctorChatsAPI.as_view()),
+    path('doctor_about/', AboutDoctorAPI.as_view()),
 ]
