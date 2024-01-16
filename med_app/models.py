@@ -100,7 +100,7 @@ class ChatStorage(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     message = models.TextField()
-    image = models.ImageField()
+    image = models.ImageField(blank=True, null=True)
     chat_code = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
