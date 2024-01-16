@@ -395,7 +395,7 @@ class PaymentNotification(APIView):
 
 class GetDoctorChatsAPI(APIView):
     def get(self, request):
-        doctor = request.GET.get('doctor')
+        doctor = Doctor.objects.get(user__user_id=request.GET.get('user_id'))
         chats = ChatStorage.objects.filter(doctor=doctor)
         serializer = ChatSerializer(data=chats, many=True)
         serializer.is_valid()
