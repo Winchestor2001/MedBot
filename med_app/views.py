@@ -1,4 +1,6 @@
 import os
+
+from django.db.models import Q
 from django.forms import model_to_dict
 from django.utils import timezone
 from datetime import datetime
@@ -383,10 +385,19 @@ class PaymentNotification(APIView):
         hash_data = create_hash(
             {"doctor": patient_payment.doctor.id, "patient": patient_payment.patient.id, "type": 'patient'}
         )
+        hash_data2 = create_hash(
+            {"doctor": patient_payment.doctor.id, "patient": patient_payment.patient.id, "type": 'doctor'}
+        )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{chat.chat_code}/{hash_data}"
+        webapp_url2 = f"{env.str('UI_DOMEN')}/meeting_chat/{chat.chat_code}/{hash_data2}"
         send_message_with_web_app(
             user_id=patient_payment.patient.user.user_id,
             url=webapp_url,
+            message="Open chat",
+        )
+        send_message_with_web_app(
+            user_id=patient_payment.doctor.user.user_id,
+            url=webapp_url2,
             message="Open chat",
         )
 
@@ -401,7 +412,7 @@ class GetDoctorChatsAPI(APIView):
         serializer.is_valid()
         return Response({'chats': serializer.data})
 
-
+      
 class AboutDoctorAPI(APIView):
     @swagger_auto_schema(
         operation_summary="Get doctor information (web)",
@@ -413,3 +424,11 @@ class AboutDoctorAPI(APIView):
         serializer = DoctorSerializer(instance=data)
         return Response({"doctors": serializer.data})
 
+      
+class GetChatHistoryAPI(ListAPIView):
+    serializer_class = ChatSerializer
+
+    def get_queryset(self):
+        data_id = self.request.data.get('pk')
+        chat = ChatStorage.objects.filter(Q(doctor__id=data_id) | Q(patient__id=data_id))
+        return chat
