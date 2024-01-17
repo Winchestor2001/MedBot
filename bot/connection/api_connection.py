@@ -86,3 +86,23 @@ async def get_result_pdf(patient):
     async with aiohttp.ClientSession() as session:
         async with session.get(url, data=data) as response:
             return await response.json()
+
+
+async def get_doctor_info(user_id):
+    url = API_URL + "/api/v1/doctor_about/"
+    data = {
+        "user_id": user_id
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=data) as response:
+            return await response.json()
+
+
+async def get_doctor_chats(user_id):
+    url = API_URL + "/api/v1/doctor_chats/"
+    data = {
+        "user_id": user_id
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=data) as response:
+            return await response.json()
