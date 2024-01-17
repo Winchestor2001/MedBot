@@ -1,6 +1,9 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
-from med_app.utils import create_hash
-from core.settings import env
+from bot.utils.misc.hasher import create_hash
+from environs import Env
+
+env = Env()
+env.read_env()
 
 
 async def basic():
