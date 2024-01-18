@@ -123,7 +123,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         message = event["message"]
-        await self.send(text_data=json.dumps({"data": message}))
+        await self.send(text_data=json.dumps(message))
 
     @database_sync_to_async
     def save_message_to_database(self, text_data_json):
