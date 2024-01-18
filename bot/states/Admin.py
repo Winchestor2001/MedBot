@@ -11,3 +11,8 @@ class Message(StatesGroup):
 
 class Admin(StatesGroup):
     text = State()
+
+
+class Payment(StatesGroup):
+    text = State()
+    price = State()

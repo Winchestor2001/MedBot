@@ -17,7 +17,7 @@ from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 from bot.data.config import BOT_TOKEN
 from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type, generate_room_code, \
-    create_hash, send_message_with_web_app, create_pdf, save_recorded_video
+    create_hash, send_message_with_web_app, create_pdf, save_recorded_video, withdraw
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param, \
     single_patient_get_param, doctor_call_post_param, doctor_rating_post_param, doctor_rating_post_param2
@@ -432,3 +432,14 @@ class GetChatHistoryAPI(ListAPIView):
         data_id = self.request.data.get('pk')
         chat = ChatStorage.objects.filter(Q(doctor__id=data_id) | Q(patient__id=data_id))
         return chat
+
+
+class WithDrawDoctorAPI(APIView):
+    def post(self, request):
+        user_id = request.data.get("user_id")
+        my_id = Doctor.objects.get(user__user_id=user_id).id
+        method = request.data.get("method")
+        account = request.data.get("account")
+        amount = request.data.get("price")
+        withdraw(my_id, method, amount, account)
+        return Response("OK")
