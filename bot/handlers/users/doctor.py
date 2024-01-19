@@ -29,7 +29,8 @@ async def doctor_intro(call: types.CallbackQuery):
                f"💸 Цена: {d['doctors']['price']} ₽ \n" \
                f"💲 Ваш баланс: {d['doctors']['balance']} ₽"
         btn = await get_money()
-        await call.message.answer_photo(d["doctors"]["avatar"], caption=text, reply_markup=btn)
+        # await call.message.answer_photo(d["doctors"]["avatar"], caption=text, reply_markup=btn)
+        await call.message.answer(text, reply_markup=btn)
 
     elif data == "chats":
         d = await get_doctor_chats(call.from_user.id)
@@ -70,8 +71,9 @@ async def payment(call: types.CallbackQuery, state: FSMContext):
 
 
 async def get_payment_account(message: types.Message, state: FSMContext):
+    text = message.text.replace("+", "")
     await state.update_data({
-        "account": message.text
+        "account": text
     })
     cancel = await cancel_btn()
     await message.answer("Введите сумму", reply_markup=cancel)

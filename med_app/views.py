@@ -441,5 +441,6 @@ class WithDrawDoctorAPI(APIView):
         method = request.data.get("method")
         account = request.data.get("account")
         amount = request.data.get("price")
-        withdraw(my_id, method, amount, account)
+        result = withdraw(my_id, method, amount, account)
+        print(result)
         return Response("OK")

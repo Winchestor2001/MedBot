@@ -1,3 +1,5 @@
+import random
+
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
@@ -227,7 +229,8 @@ def withdraw(my_id, method, amount: int, wallet):
     commission_type = 0  # Тип комиссии
 
     params = {
-        'my_id': f"doctor:{my_id}:{uuid4()}",
+        'my_id': f"doctor_{my_id}_{random.randint(10, 1000)}",
+        # 'my_id': f"doctor_{my_id}_123",
         'method': method,
         'amount': int(amount),
         'wallet': wallet,
