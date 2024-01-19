@@ -15,6 +15,7 @@ urlpatterns = [
     path("call/", DoctorCallAPIView.as_view()),
     path("admins_list/", GetAdminsIdAPIView.as_view()),
     path("doctor_rating/", DoctorRatingAPIView.as_view()),
+    path("withdraw/", WithDrawDoctorAPI.as_view()),
 
     path("video_stream_doctor/<str:room_name>/", VideoStreamDoctorView.as_view()),
     path("video_stream_patient/<str:room_name>/", VideoStreamPatientView.as_view()),

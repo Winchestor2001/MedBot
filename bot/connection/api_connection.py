@@ -1,5 +1,6 @@
 import aiohttp
 import json
+from core.settings import env
 from data.config import API_URL
 
 
@@ -106,3 +107,27 @@ async def get_doctor_chats(user_id):
     async with aiohttp.ClientSession() as session:
         async with session.get(url, data=data) as response:
             return await response.json()
+
+
+async def get_payment_methods():
+    url = "https://aaio.io/api/methods-payoff"
+    headers = {
+        'Accept': 'application/json',
+        'X-Api-Key': "NmNhOTdmNDMtOGI0Yi00YTZjLWFmOTgtZWZlMTdlNGY2OWI2OjdVUzBZZCNCUmhRZ25EWUs2aE5SUEByJUZmUjVsJkZX"
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers) as response:
+            return await response.json()
+
+
+async def withdraw_doctor(method, account, price, user_id):
+    url = API_URL + "/api/v1/withdraw/"
+    payload = {
+        "method": method,
+        "account": account,
+        "price": price,
+        "user_id": user_id
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, data=payload) as response:
+            await response.json()

@@ -4,6 +4,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from datetime import datetime, timedelta
+from core.settings import env
 import base64
 import requests
 from googletrans import Translator
@@ -13,6 +14,7 @@ import secrets
 from bot.data.config import BOT_TOKEN
 import subprocess
 import os
+from uuid import uuid4
 
 
 def check_dates(user_data, doctor_data, month, day):
@@ -217,3 +219,25 @@ def create_pdf(data, output_path):
 
     doc.build(content)
     print("error in delete files")
+
+
+def withdraw(my_id, method, amount: int, wallet):
+    url = 'https://aaio.io/api/create-payoff'
+    api_key = env.str("PAYMENT_API_KEY")  # Ключ API из раздела https://aaio.io/cabinet/api
+    commission_type = 0  # Тип комиссии
+
+    params = {
+        'my_id': f"doctor:{my_id}:{uuid4()}",
+        'method': method,
+        'amount': int(amount),
+        'wallet': wallet,
+        'commission_type': commission_type,
+    }
+
+    headers = {
+        'Accept': 'application/json',
+        'X-Api-Key': api_key
+    }
+
+    response = requests.post(url, data=params, headers=headers, timeout=(15, 60))
+    return response.json()
