@@ -25,6 +25,7 @@ async def get_money():
 async def get_chats(data):
     keyboard = InlineKeyboardMarkup(row_width=2)
     for i in data["chats"]:
+        print(i)
         hash_data = create_hash(
             {"doctor": {"id": i['doctor'], "name": i['full_name']},
              "patient": {"id": i['patient']['id'], "name": i['patient']['full_name']}, "type": 'doctor'}
