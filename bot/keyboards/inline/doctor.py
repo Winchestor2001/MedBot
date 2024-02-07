@@ -26,7 +26,8 @@ async def get_chats(data):
     keyboard = InlineKeyboardMarkup(row_width=2)
     for i in data["chats"]:
         hash_data = create_hash(
-            {"doctor": i['doctor'], "patient": i['patient']['id'], "type": 'doctor'}
+            {"doctor": {"id": i['doctor'], "name": i['full_name']},
+             "patient": {"id": i['patient']['id'], "name": i['patient']['full_name']}, "type": 'doctor'}
         )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{i['chat_code']}/{hash_data}"
         webapp_main = WebAppInfo(url=webapp_url)
