@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
-from bot.data.config import UI_DOMEN
+from data.config import UI_DOMEN
 
 main_keyboard = InlineKeyboardMarkup(row_width=2)
 webA = WebAppInfo(url=UI_DOMEN)
