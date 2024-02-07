@@ -1,6 +1,4 @@
 import aiohttp
-import json
-from core.settings import env
 from data.config import API_URL
 
 
