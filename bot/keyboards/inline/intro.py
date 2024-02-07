@@ -1,7 +1,8 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
+from bot.data.config import UI_DOMEN
 
 main_keyboard = InlineKeyboardMarkup(row_width=2)
-webA = WebAppInfo(url="https://webmed-two.vercel.app/")
+webA = WebAppInfo(url=UI_DOMEN)
 btn = InlineKeyboardButton(text="Запись на консультацию", web_app=webA)
 my_booking = InlineKeyboardButton(text="📋 Мои записи", callback_data="profile:my_booking")
 my_result = InlineKeyboardButton(text="📋 Мои результаты", callback_data="profile:my_result")

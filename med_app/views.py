@@ -250,7 +250,6 @@ class GetDoctorCorrectDatesAPIView(APIView):
         month = request.GET.get('month')
         day = request.GET.get('day')
         result = check_dates(user, doctor, month, day)
-
         return Response({"STATUS": "OK", "correct_date": result})
 
 
@@ -383,10 +382,10 @@ class PaymentNotification(APIView):
             chat_code=generate_room_code()
         )
         hash_data = create_hash(
-            {"doctor": patient_payment.doctor.id, "patient": patient_payment.patient.id, "type": 'patient'}
+            {"doctor": {"id": patient_payment.doctor.id, "name": patient_payment.doctor.full_name}, "patient": {"id": patient_payment.patient.id, "name": patient_payment.patient.full_name}, "type": 'patient'}
         )
         hash_data2 = create_hash(
-            {"doctor": patient_payment.doctor.id, "patient": patient_payment.patient.id, "type": 'doctor'}
+            {"doctor": {"id": patient_payment.doctor.id, "name": patient_payment.doctor.full_name}, "patient": {"id": patient_payment.patient.id, "name": patient_payment.patient.full_name}, "type": 'doctor'}
         )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{chat.chat_code}/{hash_data}"
         webapp_url2 = f"{env.str('UI_DOMEN')}/meeting_chat/{chat.chat_code}/{hash_data2}"
@@ -400,6 +399,8 @@ class PaymentNotification(APIView):
             url=webapp_url2,
             message="Open chat",
         )
+        patient_payment.paid = True
+        patient_payment.save()
 
         return Response({"status": "received"}, status=200)
 
@@ -426,11 +427,11 @@ class AboutDoctorAPI(APIView):
 
       
 class GetChatHistoryAPI(ListAPIView):
-    serializer_class = ChatSerializer
+    serializer_class = ChatHistorySerializer
 
     def get_queryset(self):
-        data_id = self.request.data.get('pk')
-        chat = ChatStorage.objects.filter(Q(doctor__id=data_id) | Q(patient__id=data_id))
+        chat_code = self.kwargs.get('chat_code')
+        chat = ChatMessage.objects.filter(chat__chat_code=chat_code)
         return chat
 
 

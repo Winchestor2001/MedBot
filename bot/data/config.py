@@ -9,3 +9,4 @@ BOT_TOKEN = env.str("BOT_TOKEN")  # Bot toekn
 ADMINS = env.list("ADMINS")  # adminlar ro'yxati
 API_URL = env.str("API_URL")
 BOT_URL = env.str("BOT_URL")
+UI_DOMEN = env.str("UI_DOMEN")

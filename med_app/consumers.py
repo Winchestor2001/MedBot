@@ -7,7 +7,8 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.conf import settings
 
-from med_app.models import ChatStorage, Patient, Doctor
+from med_app.models import ChatStorage, Patient, Doctor, ChatMessage
+from med_app.serializers import ChatPatientSerializer, ChatDoctorSerializer
 from med_app.utils import save_recorded_video
 from django.core.files.base import ContentFile
 from storages.backends.s3boto3 import S3Boto3Storage
@@ -116,9 +117,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
 
-        await self.save_message_to_database(text_data_json)
+        socket_data = await self.save_message_to_database(text_data_json)
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat.message", "message": text_data_json}
+            self.room_group_name, {"type": "chat.message", "message": socket_data}
         )
 
     async def chat_message(self, event):
@@ -130,16 +131,40 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json["message"]
         image = text_data_json.get("image_bytes", None)
         if image:
-            image_content = ContentFile(base64.b64decode(image), name='image.png')
-            storage = S3Boto3Storage()
-            image_path = f'media/{text_data_json["patient"]}/{text_data_json["doctor"]}/'
-            image_filename = f'{image_path}image_{time.time()}.png'
-            storage.save(image_filename, image_content)
+            _format, _img_str = image.split(';base64,')
+            _name, ext = _format.split('/')
+            image_content = base64.b64decode(_img_str)
+            # storage = S3Boto3Storage()
+            # image_path = f'media/{text_data_json["sender"]}/{text_data_json["receiver"]}/'
+            image_filename = f'image_{int(time.time())}.png'
+            with open('media/' + image_filename, 'wb') as f:
+                f.write(image_content)
+            # storage.save(image_filename, image_content)
             image = image_filename
+        sender_id = text_data_json['sender']
+        receiver_id = text_data_json['receiver']
+        if text_data_json['type'] == 'patient':
+            sender = ChatPatientSerializer(instance=Patient.objects.get(id=sender_id))
+            receiver = ChatDoctorSerializer(instance=Doctor.objects.get(id=receiver_id))
+        else:
+            sender = ChatDoctorSerializer(instance=Doctor.objects.get(id=sender_id))
+            receiver = ChatPatientSerializer(instance=Patient.objects.get(id=receiver_id))
 
-        ChatStorage.objects.create(
-            patient=Patient.objects.get(id=text_data_json['patient']),
-            doctor=Doctor.objects.get(id=text_data_json['doctor']),
+        ch = ChatMessage.objects.create(
+            chat=ChatStorage.objects.get(chat_code=self.room_name),
+            sender=sender_id,
+            receiver=receiver_id,
             message=message,
-            image=image
+            image=image,
+            type=text_data_json['type']
         )
+
+        socket_data = {
+            "sender": sender.data,
+            "receiver": receiver.data,
+            "message": text_data_json['message'],
+            "image_bytes": ch.image.url if ch.image else None,
+            "type": text_data_json['type']
+        }
+
+        return socket_data

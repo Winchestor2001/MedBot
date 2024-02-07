@@ -55,3 +55,8 @@ class ChatStorageAdmin(admin.ModelAdmin):
 class PatientPaymentAdmin(admin.ModelAdmin):
     list_display = ["doctor", "patient", "paid"]
 
+
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ["sender", "receiver", "created_at"]
+

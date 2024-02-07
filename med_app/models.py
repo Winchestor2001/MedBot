@@ -31,7 +31,7 @@ class Doctor(models.Model):
 
     def save(self, **kwargs):
         self.activate_url = BOT_URL + "?start=" + uuid4().hex[:8]
-        return super().save(**kwargs)
+        return super().save(kwargs)
 
 
 class Date(models.Model):
@@ -99,13 +99,21 @@ class DoctorRating(models.Model):
 class ChatStorage(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    message = models.TextField()
-    image = models.ImageField(blank=True, null=True)
     chat_code = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.doctor} - {self.patient}"
+
+
+class ChatMessage(models.Model):
+    chat = models.ForeignKey(ChatStorage, on_delete=models.CASCADE)
+    sender = models.IntegerField()
+    receiver = models.IntegerField()
+    message = models.TextField(blank=True, null=True)
+    image = models.ImageField(blank=True, null=True)
+    type = models.CharField(max_length=50, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class PatientPayment(models.Model):
@@ -114,7 +122,7 @@ class PatientPayment(models.Model):
     paid = models.BooleanField(default=False)
     amount = models.IntegerField(default=0)
     bill_id = models.CharField(max_length=100, blank=True, null=True)
-    pay_url = models.URLField(blank=True, null=True)
+    pay_url = models.URLField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return f"{self.patient} - {self.doctor}"
