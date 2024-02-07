@@ -25,9 +25,8 @@ async def get_money():
 async def get_chats(data):
     keyboard = InlineKeyboardMarkup(row_width=2)
     for i in data["chats"]:
-        print(i)
         hash_data = create_hash(
-            {"doctor": {"id": i['doctor'], "name": i['full_name']},
+            {"doctor": {"id": i['doctor'], "name": i['patient']['doctor']['full_name']},
              "patient": {"id": i['patient']['id'], "name": i['patient']['full_name']}, "type": 'doctor'}
         )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{i['chat_code']}/{hash_data}"
