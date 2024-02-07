@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
-from bot.utils.misc.hasher import create_hash
+from utils.misc.hasher import create_hash
 from environs import Env
 
 env = Env()
