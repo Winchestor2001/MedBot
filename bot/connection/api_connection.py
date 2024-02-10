@@ -128,4 +128,14 @@ async def withdraw_doctor(method, account, price, user_id):
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(url, data=payload) as response:
-            await response.json()
+            return await response.json()
+
+
+async def get_single_patient(patient_id):
+    url = API_URL + "/api/v1/single_patient/"
+    data = {
+        "patient_id": patient_id
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=data) as response:
+            return await response.json()

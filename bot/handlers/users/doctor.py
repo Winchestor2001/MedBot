@@ -1,5 +1,6 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
+from utils.misc.change_format_date import change_format_date
 from keyboards.inline.doctor import *
 from connection.api_connection import *
 from states.Admin import Payment
@@ -107,7 +108,35 @@ async def cancel_handler(call: types.CallbackQuery, state: FSMContext):
     await call.message.answer(msg + f"\nТы доктор.", reply_markup=btn)
 
 
+async def chats(call: types.CallbackQuery):
+    await call.answer()
+    data = call.data.split(":")[1]
+    patient = await get_single_patient(data)
+    if patient:
+        date = await change_format_date(patient['patient']['confirance_date'])
+        text = f"🆔 {patient['patient']['id']}\n" \
+               f"👨‍⚕️Доктор: {patient['patient']['doctor']['full_name']}\n" \
+               f"👤 Пациент: {patient['patient']['full_name']}\n" \
+               f"📅 Дата: {date}\n"
+        status = patient["patient"]["confirance_status"]
+        btn = await manage_chat_doctor(status)
+        await call.message.edit_text(text, reply_markup=btn)
+
+
+async def manage_chats(call: types.CallbackQuery):
+    await call.answer()
+    data = call.data.split(":")[1]
+    if data == "cancel":
+        msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
+        btn = await basic()
+        await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
+    elif data == "stop":
+        await call.message.edit_text("stop")
+
+
 def register_doctor_handler_py(dp: Dispatcher):
+    dp.register_callback_query_handler(chats, text_contains=["chat_doctor:"])
+    dp.register_callback_query_handler(manage_chats, text_contains="manage_chat:")
     dp.register_callback_query_handler(doctor_intro, text_contains=["doctor:"])
     dp.register_callback_query_handler(payment, text_contains=["payment:"])
     dp.register_callback_query_handler(cancel_handler, text=["handler:cancel"], state=Payment.text)

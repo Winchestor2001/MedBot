@@ -25,16 +25,36 @@ async def get_money():
 async def get_chats(data):
     keyboard = InlineKeyboardMarkup(row_width=2)
     for i in data["chats"]:
-        hash_data = create_hash(
-            {"doctor": {"id": i['doctor'], "name": i['patient']['doctor']['full_name']},
-             "patient": {"id": i['patient']['id'], "name": i['patient']['full_name']}, "type": 'doctor'}
-        )
-        webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{i['chat_code']}/{hash_data}"
-        webapp_main = WebAppInfo(url=webapp_url)
-        btn = InlineKeyboardButton(text=f"{i['patient']['full_name']}", web_app=webapp_main)
+        # hash_data = create_hash(
+        #     {"doctor": {"id": i['doctor'], "name": i['patient']['doctor']['full_name']},
+        #      "patient": {"id": i['patient']['id'], "name": i['patient']['full_name']}, "type": 'doctor'}
+        # )
+        # webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{i['chat_code']}/{hash_data}"
+        # webapp_main = WebAppInfo(url=webapp_url)
+        # btn = InlineKeyboardButton(text=f"{i['patient']['full_name']}", web_app=webapp_main)
+        # print(i)
+        btn = InlineKeyboardButton(text=f"{i['patient']['full_name']}", callback_data=f"chat_doctor:{i['patient']['id']}")
         keyboard.insert(btn)
     back = InlineKeyboardButton("🔙 Назад", callback_data="doctor:cancel")
     keyboard.row(back)
+    return keyboard
+
+
+async def manage_chat_doctor(status):
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    stop = InlineKeyboardButton("🛑 Стоп", callback_data="manage_chat:stop")
+    back = InlineKeyboardButton("🔙 Назад", callback_data="manage_chat:cancel")
+    # hash_data = create_hash(
+    #     {"doctor": {"id": i['doctor'], "name": i['patient']['doctor']['full_name']},
+    #      "patient": {"id": i['patient']['id'], "name": i['patient']['full_name']}, "type": 'doctor'}
+    # )
+    # webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{i['chat_code']}/{hash_data}"
+    # webapp_main = WebAppInfo(url=webapp_url)
+    # web_app = InlineKeyboardButton(text=f"💬 Открыть", web_app=webapp_main)
+    # keyboard.add(web_app)
+    if not status == "close":
+        keyboard.add(stop)
+    keyboard.add(back)
     return keyboard
 
 

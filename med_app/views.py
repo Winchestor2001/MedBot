@@ -111,7 +111,7 @@ class SinglePatientApiView(APIView):
 
     )
     def get(self, request):
-        patient = Patient.objects.filter(id=request.GET["patient_id"])
+        patient = Patient.objects.filter(id=request.data.get("patient_id"))
         if patient.exists():
             serializer = PatientSerializer(instance=patient[0])
             return Response({"patient": serializer.data})
