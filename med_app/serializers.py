@@ -76,6 +76,7 @@ class ChatSerializer(ModelSerializer):
 
 class PatientChatSerializer(ModelSerializer):
     doctor = DoctorSerializer()
+    patient = PatientSerializer()
 
     class Meta:
         model = ChatStorage

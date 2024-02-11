@@ -36,10 +36,10 @@ async def get_chats(data):
 async def get_patient_chats_btn(data):
     keyboard = InlineKeyboardMarkup(row_width=2)
     for i in data["chats"]:
-        btn = InlineKeyboardButton(text=f"{i['patient']['full_name']} - 👨‍⚕️{i['patient']['doctor']['full_name']}",
-                                   callback_data=f"chat_patient:{i['id']}")
+        btn = InlineKeyboardButton(text=f"{i['patient']['full_name']} - 👨‍⚕️{i['doctor']['full_name']}",
+                                   callback_data=f"single_patient_chat:{i['id']}")
         keyboard.insert(btn)
-    back = InlineKeyboardButton("🔙 Назад", callback_data="chat_patient:cancel")
+    back = InlineKeyboardButton("🔙 Назад", callback_data="single_patient_chat:cancel")
     keyboard.row(back)
     return keyboard
 
@@ -59,6 +59,21 @@ async def manage_chat_doctor(status, chat):
     keyboard.row(web_app)
     if not status == "close":
         keyboard.add(stop)
+    keyboard.add(back)
+    return keyboard
+
+
+async def manage_patient_chat(chat):
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    back = InlineKeyboardButton("🔙 Назад", callback_data="single_patient_chat:cancel")
+    hash_data = create_hash(
+        {"doctor": {"id": chat['patient']['doctor']['id'], "name": chat['patient']['doctor']['full_name']},
+         "patient": {"id": chat['patient']['id'], "name": chat['patient']['full_name']}, "type": 'patient'}
+    )
+    webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{chat['chat_code']}/{hash_data}"
+    webapp_main = WebAppInfo(url=webapp_url)
+    web_app = InlineKeyboardButton(text=f"💬 Открыть", web_app=webapp_main)
+    keyboard.row(web_app)
     keyboard.add(back)
     return keyboard
 
