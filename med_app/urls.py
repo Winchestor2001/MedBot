@@ -23,6 +23,8 @@ urlpatterns = [
     path('payment_notification/', PaymentNotification.as_view()),
 
     path('doctor_chats/', GetDoctorChatsAPI.as_view()),
+    path('patient_chats/', GetPatientChatsAPI.as_view()),
+    path('single_chat/', GetSingleChatAPI.as_view()),
     path('doctor_about/', AboutDoctorAPI.as_view()),
     path('chat_history/<str:chat_code>/', GetChatHistoryAPI.as_view()),
 ]

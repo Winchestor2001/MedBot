@@ -413,6 +413,25 @@ class GetDoctorChatsAPI(APIView):
         serializer.is_valid()
         return Response({'chats': serializer.data})
 
+
+class GetPatientChatsAPI(APIView):
+    def get(self, request):
+        patient = Patient.objects.get(user__user_id=request.data.get('user_id'))
+        chats = ChatStorage.objects.filter(patient=patient)
+        print(chats)
+        serializer = ChatSerializer(instance=chats, many=True)
+        # serializer.is_valid()
+        print(serializer.data)
+        return Response({'chats': serializer.data})
+
+
+class GetSingleChatAPI(APIView):
+    def get(self, request):
+        chat = ChatStorage.objects.filter(id=request.data.get("chat_id"))
+        serializer = ChatSerializer(data=chat, many=True)
+        serializer.is_valid()
+        return Response({'chat': serializer.data})
+
       
 class AboutDoctorAPI(APIView):
     @swagger_auto_schema(
