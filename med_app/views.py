@@ -111,7 +111,7 @@ class SinglePatientApiView(APIView):
 
     )
     def get(self, request):
-        patient = Patient.objects.filter(id=request.GET["patient_id"])
+        patient = Patient.objects.filter(id=request.data.get("patient_id"))
         if patient.exists():
             serializer = PatientSerializer(instance=patient[0])
             return Response({"patient": serializer.data})
@@ -412,6 +412,22 @@ class GetDoctorChatsAPI(APIView):
         serializer = ChatSerializer(data=chats, many=True)
         serializer.is_valid()
         return Response({'chats': serializer.data})
+
+
+class GetPatientChatsAPI(APIView):
+    def get(self, request):
+        patient = Patient.objects.get(user__user_id=request.data.get('user_id'))
+        chats = ChatStorage.objects.filter(patient=patient)
+        serializer = PatientChatSerializer(instance=chats, many=True)
+        return Response({'chats': serializer.data})
+
+
+class GetSingleChatAPI(APIView):
+    def get(self, request):
+        chat = ChatStorage.objects.filter(id=request.data.get("chat_id"))
+        serializer = ChatSerializer(data=chat, many=True)
+        serializer.is_valid()
+        return Response({'chat': serializer.data})
 
       
 class AboutDoctorAPI(APIView):

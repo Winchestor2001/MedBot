@@ -107,6 +107,27 @@ async def get_doctor_chats(user_id):
             return await response.json()
 
 
+async def get_single_chat(chat_id):
+    url = API_URL + "/api/v1/single_chat/"
+    data = {
+        "chat_id": chat_id
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=data) as response:
+            return await response.json()
+
+
+async def get_patient_chats(user_id):
+    url = API_URL + "/api/v1/patient_chats/"
+    data = {
+        "user_id": user_id
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=data) as response:
+            if response.status == 200:
+                return await response.json()
+
+
 async def get_payment_methods():
     url = "https://aaio.io/api/methods-payoff"
     headers = {
@@ -128,4 +149,25 @@ async def withdraw_doctor(method, account, price, user_id):
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(url, data=payload) as response:
-            await response.json()
+            return await response.json()
+
+
+async def get_single_patient(patient_id):
+    url = API_URL + "/api/v1/single_patient/"
+    data = {
+        "patient_id": patient_id
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=data) as response:
+            return await response.json()
+
+
+async def stop_chat(chat_code):
+    url = API_URL + "/api/v1/stop_chat/"
+    data = {
+        "chat_code": chat_code
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=data) as response:
+            return await response.json()
+

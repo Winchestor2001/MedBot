@@ -1,5 +1,6 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
+from utils.misc.change_format_date import change_format_date, detail_date
 from keyboards.inline.doctor import *
 from connection.api_connection import *
 from states.Admin import Payment
@@ -34,7 +35,8 @@ async def doctor_intro(call: types.CallbackQuery):
 
     elif data == "chats":
         d = await get_doctor_chats(call.from_user.id)
-        if d["chats"]:
+        # print(d)
+        if d.get("chats", False):
             btn = await get_chats(d)
             await call.message.answer("💬 Чаты", reply_markup=btn)
         else:
@@ -88,9 +90,9 @@ async def get_payment_price(message: types.Message, state: FSMContext):
     method = data["method"]
     account = data["account"]
     price = data["price"]
-    print(method, account, price)
+    # print(method, account, price)
     d = await withdraw_doctor(method, account, price, message.from_user.id)
-    print(d)
+    # print(d)
     await message.answer("✅ Ваш запрос принят, оплата за ваш аккаунт произойдет как можно скорее.")
     msg = f"Добро пожаловать 👋, {message.from_user.full_name}!"
     btn = await basic()
@@ -107,7 +109,42 @@ async def cancel_handler(call: types.CallbackQuery, state: FSMContext):
     await call.message.answer(msg + f"\nТы доктор.", reply_markup=btn)
 
 
+async def chats(call: types.CallbackQuery):
+    await call.answer()
+    data = call.data.split(":")[1]
+    patient = await get_single_chat(data)
+    if patient:
+        d = patient['chat'][0]['created_at'][:10]
+        date = await change_format_date(d)
+        text = f"🆔 {patient['chat'][0]['id']}\n" \
+               f"👨‍⚕️Доктор: {patient['chat'][0]['patient']['doctor']['full_name']}\n" \
+               f"👤 Пациент: {patient['chat'][0]['patient']['full_name']}\n" \
+               f"📅 Дата: {date}\n" \
+               f"📔 Чат: {patient['chat'][0]['chat_code']}"
+        status = patient["chat"][0]['patient']["confirance_status"]
+        btn = await manage_chat_doctor(status, patient["chat"][0])
+        await call.message.edit_text(text, reply_markup=btn)
+
+
+async def manage_chats(call: types.CallbackQuery):
+    await call.answer()
+    data = call.data.split(":")[1]
+    if data == "cancel":
+        msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
+        btn = await basic()
+        await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
+    elif data == "stop":
+        chat_code = call.message.text.split(": ")[-1]
+        # await stop_chat(chat_code) # stop qiladigan funksiya
+        await call.message.edit_text("✅ Остановлено")
+        msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
+        btn = await basic()
+        await call.message.answer(msg, reply_markup=btn)
+
+
 def register_doctor_handler_py(dp: Dispatcher):
+    dp.register_callback_query_handler(chats, text_contains=["chat_doctor:"])
+    dp.register_callback_query_handler(manage_chats, text_contains="manage_chat:")
     dp.register_callback_query_handler(doctor_intro, text_contains=["doctor:"])
     dp.register_callback_query_handler(payment, text_contains=["payment:"])
     dp.register_callback_query_handler(cancel_handler, text=["handler:cancel"], state=Payment.text)

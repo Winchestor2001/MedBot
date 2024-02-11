@@ -74,6 +74,15 @@ class ChatSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class PatientChatSerializer(ModelSerializer):
+    doctor = DoctorSerializer()
+    patient = PatientSerializer()
+
+    class Meta:
+        model = ChatStorage
+        fields = '__all__'
+
+
 class ChatDoctorSerializer(ModelSerializer):
 
     class Meta:
