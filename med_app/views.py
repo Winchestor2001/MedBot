@@ -461,3 +461,14 @@ class WithDrawDoctorAPI(APIView):
         result = withdraw(my_id, method, amount, account)
         print(result)
         return Response("OK")
+
+
+class DoctorStopChatAPIView(APIView):
+    def post(self, request):
+        chat_code = request.data.get("chat_code")
+        chat = ChatStorage.objects.get(chat_code=chat_code)
+        patient = Patient.objects.get(id=chat.patient.id)
+        patient.confirance_status = 'close'
+        patient.save()
+        return Response("OK")
+
