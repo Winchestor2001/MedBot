@@ -111,9 +111,10 @@ class ChatHistorySerializer(ModelSerializer):
             doctor = Doctor.objects.get(id=obj.receiver)
             doctor_obj = DoctorSerializer(doctor).data
 
+            confirance_status = patient.confirance_status
             patient = {"id": patient_obj['id'], "full_name": patient_obj['full_name']}
             doctor = {"id": doctor_obj['id'], "full_name": doctor_obj['full_name']}
-            return patient, doctor
+            return patient, doctor, confirance_status
 
         elif obj.type == 'doctor':
             doctor = Doctor.objects.get(id=obj.sender)
@@ -122,9 +123,10 @@ class ChatHistorySerializer(ModelSerializer):
             patient = Patient.objects.get(id=obj.receiver)
             patient_obj = PatientSerializer(patient).data
 
+            confirance_status = patient.confirance_status
             patient = {"id": patient_obj['id'], "full_name": patient_obj['full_name']}
             doctor = {"id": doctor_obj['id'], "full_name": doctor_obj['full_name']}
-            return doctor, patient
+            return doctor, patient, confirance_status
 
     def to_representation(self, instance):
         redata = super().to_representation(instance)
@@ -132,7 +134,7 @@ class ChatHistorySerializer(ModelSerializer):
             redata['image_bytes'] = '/' + redata['image'].split('/', 3)[-1]
             redata.pop('image')
 
-        redata['sender'], redata['receiver'] = self.get_user_obj(instance)
+        redata['sender'], redata['receiver'], redata['status'] = self.get_user_obj(instance)
 
         return redata
 

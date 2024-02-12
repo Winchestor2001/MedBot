@@ -5,6 +5,7 @@ from keyboards.inline.doctor import *
 from connection.api_connection import *
 from states.Admin import Payment
 
+from bot.connection.api_connection import stop_chat
 
 data_methods = {
         "qiwi": "Введите Qiwi тел.номер",
@@ -129,16 +130,15 @@ async def chats(call: types.CallbackQuery):
 async def manage_chats(call: types.CallbackQuery):
     await call.answer()
     data = call.data.split(":")[1]
+    btn = await basic()
     if data == "cancel":
         msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
-        btn = await basic()
         await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
     elif data == "stop":
         chat_code = call.message.text.split(": ")[-1]
-        # await stop_chat(chat_code) # stop qiladigan funksiya
+        await stop_chat(chat_code)  # stop qiladigan funksiya
         await call.message.edit_text("✅ Остановлено")
         msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
-        btn = await basic()
         await call.message.answer(msg, reply_markup=btn)
 
 
