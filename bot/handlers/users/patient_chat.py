@@ -12,7 +12,7 @@ async def chat_patient(call: types.CallbackQuery):
     data = call.data.split(":")[1]
     if data == "chats":
         chats = await get_patient_chats(call.from_user.id)
-        if chats.get("chats", False):
+        if chats:
             btn = await get_patient_chats_btn(chats)
             await call.message.edit_text("💬 Чаты", reply_markup=btn)
         else:
