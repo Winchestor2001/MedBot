@@ -126,6 +126,8 @@ async def get_patient_chats(user_id):
         async with session.get(url, data=data) as response:
             if response.status == 200:
                 return await response.json()
+            else:
+                return False
 
 
 async def get_payment_methods():
