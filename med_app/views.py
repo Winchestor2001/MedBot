@@ -137,13 +137,13 @@ class PatientApiView(APIView):
         request_body=patient_post_param
     )
     def post(self, request):
-        selected_date = request.data['conference_date']["selectedDate"]
-        selected_time = request.data['conference_date']["selectedTime"]
-        selected_month = request.data['conference_date']["selectedMonth"]
-        start_time_str = selected_time.replace(' ', '').split('-')[0].strip()
-
-        formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
-        formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
+        # selected_date = request.data['conference_date']["selectedDate"]
+        # selected_time = request.data['conference_date']["selectedTime"]
+        # selected_month = request.data['conference_date']["selectedMonth"]
+        # start_time_str = selected_time.replace(' ', '').split('-')[0].strip()
+        #
+        # formatted_datetime_str = f"{selected_month:02d}-{selected_date:02d} {start_time_str}"
+        # formatted_datetime = datetime.strptime(formatted_datetime_str, "%m-%d %H:%M")
 
         new_patient = Patient.objects.create(
             user=User.objects.get(user_id=request.data["user"]),
@@ -151,24 +151,24 @@ class PatientApiView(APIView):
             phone_number=request.data["phone_number"],
             additional_information=request.data["additional_information"],
             doctor=Doctor.objects.get(id=request.data["doctor_id"]),
-            confirance_date=formatted_datetime,
+            # confirance_date=formatted_datetime,
         )
         current_year = datetime.now(pytz.timezone('Asia/Tashkent')).year
-        formatted_datetime = formatted_datetime.replace(year=current_year)
+        # formatted_datetime = formatted_datetime.replace(year=current_year)
         MeetingRoom.objects.create(
             patient=new_patient,
             doctor=new_patient.doctor,
-            start_meet_date=formatted_datetime,
+            # start_meet_date=formatted_datetime,
             meet_code=generate_room_code()
         )
 
         data = model_to_dict(new_patient)
         get_doctor = new_patient.doctor
-        date = modify_date_type(str(data["confirance_date"]))
+        # date = modify_date_type(str(data["confirance_date"]))
+        # f"📆 Дата и время: {date}\n\n" \
         msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
               f"📋 Заказ ID: {data['id']}\n" \
-              f"👨‍⚕️ Доктор: {get_doctor}\n" \
-              f"📆 Дата и время: {date}\n\n" \
+              f"👨‍⚕️ Доктор: {get_doctor}\n\n" \
               f"Спасибо, что выбрали наш сервис! Если у вас есть какие-либо вопросы или вам нужно перенести встречу, " \
               f"свяжитесь с нами. 📞"
         user_id = int(request.data["user"])
