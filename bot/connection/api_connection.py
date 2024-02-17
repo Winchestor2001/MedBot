@@ -131,7 +131,7 @@ async def get_patient_chats(user_id):
 
 
 async def get_payment_methods():
-    url = "https://aaio.io/api/methods-payoff"
+    url = "https://aaio.so/api/methods-payoff"
     headers = {
         'Accept': 'application/json',
         'X-Api-Key': "NmNhOTdmNDMtOGI0Yi00YTZjLWFmOTgtZWZlMTdlNGY2OWI2OjdVUzBZZCNCUmhRZ25EWUs2aE5SUEByJUZmUjVsJkZX"
@@ -171,5 +171,8 @@ async def stop_chat(chat_code):
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(url, data=data) as response:
-            return await response.json()
+            if response.status == 200:
+                return await response.json()
+            else:
+                return False
 

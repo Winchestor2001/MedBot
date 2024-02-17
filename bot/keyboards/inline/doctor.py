@@ -9,7 +9,7 @@ env.read_env()
 async def basic():
     keyboard = InlineKeyboardMarkup(row_width=2)
     btn1 = InlineKeyboardButton("👤 Профиль", callback_data="doctor:profile")
-    btn2 = InlineKeyboardButton("💬 Чаты", callback_data="doctor:chats")
+    btn2 = InlineKeyboardButton("👨🏻‍⚕️ Пациенты", callback_data="doctor:chats")
     keyboard.add(btn1, btn2)
     return keyboard
 
@@ -47,16 +47,21 @@ async def get_patient_chats_btn(data):
 # detail chat, e.g open, stop, back
 async def manage_chat_doctor(status, chat):
     keyboard = InlineKeyboardMarkup(row_width=2)
-    stop = InlineKeyboardButton("🛑 Стоп", callback_data="manage_chat:stop")
+    stop = InlineKeyboardButton("🛑 Стоп Чат", callback_data="manage_chat:stop")
     back = InlineKeyboardButton("🔙 Назад", callback_data="manage_chat:cancel")
     hash_data = create_hash(
         {"doctor": {"id": chat['patient']['doctor']['id'], "name": chat['patient']['doctor']['full_name']},
          "patient": {"id": chat['patient']['id'], "name": chat['patient']['full_name']}, "type": 'doctor'}
     )
+    # simple chat btn
     webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{chat['chat_code']}/{hash_data}"
     webapp_main = WebAppInfo(url=webapp_url)
-    web_app = InlineKeyboardButton(text=f"💬 Открыть", web_app=webapp_main)
-    keyboard.row(web_app)
+    web_app = InlineKeyboardButton(text=f"💬 Открыть Чат", web_app=webapp_main)
+    # video chat btn
+    webapp_url_room = f"{env.str('UI_DOMEN')}/meeting_room/{chat['meeting_root']}/{hash_data}"
+    webapp_main_r = WebAppInfo(url=webapp_url_room)
+    w_r = InlineKeyboardButton(text=f"📹 Открыть Видеочат", web_app=webapp_main_r)
+    keyboard.row(web_app, w_r)
     if not status == "close":
         keyboard.add(stop)
     keyboard.add(back)

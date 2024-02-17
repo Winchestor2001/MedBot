@@ -20,8 +20,8 @@ data_methods = {
 
 
 async def doctor_intro(call: types.CallbackQuery):
-    await call.answer()
-    await call.message.delete()
+    # await call.answer()
+    # await call.message.delete()
     msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
     data = call.data.split(":")[1]
     if data == "profile":
@@ -32,41 +32,41 @@ async def doctor_intro(call: types.CallbackQuery):
                f"💲 Ваш баланс: {d['doctors']['balance']} ₽"
         btn = await get_money()
         # await call.message.answer_photo(d["doctors"]["avatar"], caption=text, reply_markup=btn)
-        await call.message.answer(text, reply_markup=btn)
+        await call.message.edit_text(text, reply_markup=btn)
 
     elif data == "chats":
         d = await get_doctor_chats(call.from_user.id)
         # print(d)
         if d.get("chats", False):
             btn = await get_chats(d)
-            await call.message.answer("💬 Чаты", reply_markup=btn)
+            await call.message.edit_text("👤 Пациенты", reply_markup=btn)
         else:
-            await call.message.answer("У Вас нет Чаты")
+            await call.answer("У Вас нет Чаты", show_alert=True)
             btn = await basic()
-            await call.message.answer(msg + f"\nТы доктор.", reply_markup=btn)
+            await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
 
     elif data == "get_money":
         methods = await get_payment_methods()
         btn = await payment_method_btn(methods)
-        await call.message.answer("Choose payment method", reply_markup=btn)
+        await call.message.edit_text("Choose payment method", reply_markup=btn)
 
     elif data == "cancel":
         btn = await basic()
-        await call.message.answer(msg + f"\nТы доктор.", reply_markup=btn)
+        await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
 
 
 async def payment(call: types.CallbackQuery, state: FSMContext):
-    await call.message.delete()
+    # await call.message.delete()
     await call.answer()
     msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
     method = call.data.split(":")[1]
     if method == "cancel":
         btn = await basic()
-        await call.message.answer(msg + f"\nТы доктор.", reply_markup=btn)
+        await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
 
     if data_methods.get(method, False):
         cancel = await cancel_btn()
-        await call.message.answer(data_methods[method], reply_markup=cancel)
+        await call.message.edit_text(data_methods[method], reply_markup=cancel)
         await Payment.text.set()
         await state.update_data({
             "method": method
@@ -110,7 +110,7 @@ async def cancel_handler(call: types.CallbackQuery, state: FSMContext):
     await call.message.answer(msg + f"\nТы доктор.", reply_markup=btn)
 
 
-async def chats(call: types.CallbackQuery):
+async def chats(call: types.CallbackQuery, state: FSMContext):
     await call.answer()
     data = call.data.split(":")[1]
     patient = await get_single_chat(data)
@@ -120,14 +120,14 @@ async def chats(call: types.CallbackQuery):
         text = f"🆔 {patient['chat'][0]['id']}\n" \
                f"👨‍⚕️Доктор: {patient['chat'][0]['patient']['doctor']['full_name']}\n" \
                f"👤 Пациент: {patient['chat'][0]['patient']['full_name']}\n" \
-               f"📅 Дата: {date}\n" \
-               f"📔 Чат: {patient['chat'][0]['chat_code']}"
+               f"📅 Дата: {date}\n"
         status = patient["chat"][0]['patient']["confirance_status"]
+        await state.update_data(chat_code=patient["chat"][0]["chat_code"])
         btn = await manage_chat_doctor(status, patient["chat"][0])
         await call.message.edit_text(text, reply_markup=btn)
 
 
-async def manage_chats(call: types.CallbackQuery):
+async def manage_chats(call: types.CallbackQuery, state: FSMContext):
     await call.answer()
     data = call.data.split(":")[1]
     btn = await basic()
@@ -135,9 +135,14 @@ async def manage_chats(call: types.CallbackQuery):
         msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
         await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
     elif data == "stop":
-        chat_code = call.message.text.split(": ")[-1]
-        await stop_chat(chat_code)  # stop qiladigan funksiya
-        await call.message.edit_text("✅ Остановлено")
+        s = await state.get_data()
+        chat_code = s["chat_code"]
+        resp = await stop_chat(chat_code)  # stop qiladigan funksiya
+        await state.finish()
+        if resp:
+            await call.message.edit_text("✅ Остановлено")
+        else:
+            await call.message.edit_text("❌ Не Остановлено")
         msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
         await call.message.answer(msg, reply_markup=btn)
 
