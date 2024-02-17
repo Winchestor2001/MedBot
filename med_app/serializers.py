@@ -11,21 +11,18 @@ class UserSerializer(ModelSerializer):
 
 
 class DateSerializer(ModelSerializer):
-
     class Meta:
         model = Date
         fields = "__all__"
 
 
 class DoctorRatingSerializer(ModelSerializer):
-
     class Meta:
         model = DoctorRating
         fields = "__all__"
 
 
 class DoctorSerializer(ModelSerializer):
-
     class Meta:
         model = Doctor
         fields = '__all__'
@@ -73,6 +70,16 @@ class ChatSerializer(ModelSerializer):
         model = ChatStorage
         fields = '__all__'
 
+    @staticmethod
+    def get_patient_meeting_room(obj):
+        meeting_room_code = MeetingRoom.objects.get(patient=obj.patient)
+        return meeting_room_code.meet_code
+
+    def to_representation(self, instance):
+        redata = super().to_representation(instance)
+        redata['meeting_root'] = self.get_patient_meeting_room(instance)
+        return redata
+
 
 class PatientChatSerializer(ModelSerializer):
     doctor = DoctorSerializer()
@@ -84,21 +91,18 @@ class PatientChatSerializer(ModelSerializer):
 
 
 class ChatDoctorSerializer(ModelSerializer):
-
     class Meta:
         model = Doctor
         fields = '__all__'
 
 
 class ChatPatientSerializer(ModelSerializer):
-
     class Meta:
         model = Patient
         fields = '__all__'
 
 
 class ChatHistorySerializer(ModelSerializer):
-
     class Meta:
         model = ChatMessage
         fields = '__all__'
@@ -137,4 +141,3 @@ class ChatHistorySerializer(ModelSerializer):
         redata['sender'], redata['receiver'], redata['status'] = self.get_user_obj(instance)
 
         return redata
-
