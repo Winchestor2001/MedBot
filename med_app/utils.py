@@ -224,7 +224,7 @@ def create_pdf(data, output_path):
 
 
 def withdraw(my_id, method, amount: int, wallet):
-    url = 'https://aaio.io/api/create-payoff'
+    url = 'https://aaio.so/api/create-payoff'
     api_key = env.str("PAYMENT_API_KEY")  # Ключ API из раздела https://aaio.io/cabinet/api
     commission_type = 0  # Тип комиссии
 
