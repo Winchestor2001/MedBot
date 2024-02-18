@@ -58,7 +58,7 @@ async def manage_chat_doctor(status, chat):
     webapp_main = WebAppInfo(url=webapp_url)
     web_app = InlineKeyboardButton(text=f"💬 Открыть Чат", web_app=webapp_main)
     # video chat btn
-    webapp_url_room = f"{env.str('UI_DOMEN')}/meeting_room/{chat['meeting_root']}/{hash_data}"
+    webapp_url_room = f"{env.str('UI_DOMEN')}/meeting/{chat['meeting_root']}/{hash_data}"
     webapp_main_r = WebAppInfo(url=webapp_url_room)
     w_r = InlineKeyboardButton(text=f"📹 Открыть Видеочат", web_app=webapp_main_r)
     keyboard.row(web_app, w_r)
