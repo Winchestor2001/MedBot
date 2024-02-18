@@ -264,7 +264,9 @@ class DoctorCallAPIView(APIView):
         data_type = request.data["type"]
         meet = MeetingRoom.objects.get(patient__id=patient)
         hash_data = create_hash(
-            {"doctor": doctor, "patient": patient, "type": data_type}
+            # {"doctor": doctor, "patient": patient, "type": data_type}
+            {"doctor": {"id": meet.doctor.id, "name": meet.doctor.full_name},
+             "patient": {"id": meet.patient.id, "name": meet.patient.full_name}, "type": data_type}
         )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting/{meet.meet_code}/{hash_data}"
         send_message_with_web_app(
@@ -382,10 +384,13 @@ class PaymentNotification(APIView):
             chat_code=generate_room_code()
         )
         hash_data = create_hash(
-            {"doctor": {"id": patient_payment.doctor.id, "name": patient_payment.doctor.full_name}, "patient": {"id": patient_payment.patient.id, "name": patient_payment.patient.full_name}, "type": 'patient'}
+            {"doctor": {"id": patient_payment.doctor.id, "name": patient_payment.doctor.full_name},
+             "patient": {"id": patient_payment.patient.id, "name": patient_payment.patient.full_name},
+             "type": 'patient'}
         )
         hash_data2 = create_hash(
-            {"doctor": {"id": patient_payment.doctor.id, "name": patient_payment.doctor.full_name}, "patient": {"id": patient_payment.patient.id, "name": patient_payment.patient.full_name}, "type": 'doctor'}
+            {"doctor": {"id": patient_payment.doctor.id, "name": patient_payment.doctor.full_name},
+             "patient": {"id": patient_payment.patient.id, "name": patient_payment.patient.full_name}, "type": 'doctor'}
         )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{chat.chat_code}/{hash_data}"
         webapp_url2 = f"{env.str('UI_DOMEN')}/meeting_chat/{chat.chat_code}/{hash_data2}"
@@ -429,7 +434,7 @@ class GetSingleChatAPI(APIView):
         serializer.is_valid()
         return Response({'chat': serializer.data})
 
-      
+
 class AboutDoctorAPI(APIView):
     @swagger_auto_schema(
         operation_summary="Get doctor information (web)",
@@ -441,7 +446,7 @@ class AboutDoctorAPI(APIView):
         serializer = DoctorSerializer(instance=data)
         return Response({"doctors": serializer.data})
 
-      
+
 class GetChatHistoryAPI(ListAPIView):
     serializer_class = ChatHistorySerializer
 
@@ -471,4 +476,3 @@ class DoctorStopChatAPIView(APIView):
         patient.confirance_status = 'close'
         patient.save()
         return Response("OK")
-

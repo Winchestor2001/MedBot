@@ -24,7 +24,9 @@ def check_meet():
     logging.info(meets)
     for meet in meets:
         hash_data = create_hash(
-            {"doctor": meet.doctor.id, "patient": meet.patient.id, "type": "doctor"}
+            # {"doctor": meet.doctor.id, "patient": meet.patient.id, "type": "doctor"}
+            {"doctor": {"id": meet.doctor.id, "name": meet.doctor.full_name},
+             "patient": {"id": meet.patient.id, "name": meet.patient.full_name}, "type": "doctor"}
         )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting/{meet.meet_code}/{hash_data}"
         send_message_with_web_app(
