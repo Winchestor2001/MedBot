@@ -264,9 +264,9 @@ class DoctorCallAPIView(APIView):
         data_type = request.data["type"]
         meet = MeetingRoom.objects.get(patient__id=patient)
         hash_data = create_hash(
-            # {"doctor": doctor, "patient": patient, "type": data_type}
-            {"doctor": {"id": meet.doctor.id, "name": meet.doctor.full_name},
-             "patient": {"id": meet.patient.id, "name": meet.patient.full_name}, "type": data_type}
+            {"doctor": doctor, "patient": patient, "type": data_type}
+            # {"doctor": {"id": meet.doctor.id, "name": meet.doctor.full_name},
+            #  "patient": {"id": meet.patient.id, "name": meet.patient.full_name}, "type": data_type}
         )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting/{meet.meet_code}/{hash_data}"
         send_message_with_web_app(
