@@ -1,5 +1,4 @@
 from aiogram import types, Dispatcher
-from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from utils.misc.change_format_date import change_format_date, detail_date
 from keyboards.inline.doctor import *
@@ -30,8 +29,7 @@ async def s_chat(call: types.CallbackQuery):
             text = f"🆔 {patient['chat'][0]['id']}\n" \
                    f"👨‍⚕️Доктор: {patient['chat'][0]['patient']['doctor']['full_name']}\n" \
                    f"👤 Пациент: {patient['chat'][0]['patient']['full_name']}\n" \
-                   f"📅 Дата: {date}\n" \
-                   f"📔 Чат: {patient['chat'][0]['chat_code']}"
+                   f"📅 Дата: {date}\n"
             btn = await manage_patient_chat(patient["chat"][0])
             await call.message.edit_text(text, reply_markup=btn)
     else:

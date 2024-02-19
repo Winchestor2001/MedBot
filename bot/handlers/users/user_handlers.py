@@ -32,7 +32,7 @@ async def bot_start(message: types.Message, state: FSMContext):
         else:
             # if is_doctor is true, inline keyboards don't show for user
             btn = await basic()
-            await message.answer(msg + f"\nВы доктор.", reply_markup=btn)
+            await message.answer(msg + f"\nТы доктор.", reply_markup=btn)
 
 
 async def bot_help(message: types.Message, state: FSMContext):

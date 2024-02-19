@@ -41,7 +41,7 @@ async def doctor_intro(call: types.CallbackQuery):
             btn = await get_chats(d)
             await call.message.edit_text("👤 Пациенты", reply_markup=btn)
         else:
-            await call.answer("У Вас нет Чаты", show_alert=True)
+            await call.answer("У Вас нет Пациенты", show_alert=True)
             btn = await basic()
             await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
 
@@ -132,8 +132,11 @@ async def manage_chats(call: types.CallbackQuery, state: FSMContext):
     data = call.data.split(":")[1]
     btn = await basic()
     if data == "cancel":
-        msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
-        await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
+        d = await get_doctor_chats(call.from_user.id)
+        # print(d)
+        if d.get("chats", False):
+            btn = await get_chats(d)
+            await call.message.edit_text("👤 Пациенты", reply_markup=btn)
     elif data == "stop":
         s = await state.get_data()
         chat_code = s["chat_code"]

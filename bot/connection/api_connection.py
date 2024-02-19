@@ -1,5 +1,9 @@
 import aiohttp
 from data.config import API_URL
+from environs import Env
+
+env = Env()
+env.read_env()
 
 
 async def add_user(user_id, username=None):
@@ -134,7 +138,7 @@ async def get_payment_methods():
     url = "https://aaio.so/api/methods-payoff"
     headers = {
         'Accept': 'application/json',
-        'X-Api-Key': "NmNhOTdmNDMtOGI0Yi00YTZjLWFmOTgtZWZlMTdlNGY2OWI2OjdVUzBZZCNCUmhRZ25EWUs2aE5SUEByJUZmUjVsJkZX"
+        'X-Api-Key': env.str("PAYMENT_API_KEY")
     }
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as response:
