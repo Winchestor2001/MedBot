@@ -414,15 +414,16 @@ class GetDoctorChatsAPI(APIView):
     def get(self, request):
         doctor = Doctor.objects.get(user__user_id=request.data.get('user_id'))
         chats = ChatStorage.objects.filter(doctor=doctor)
-        serializer = ChatSerializer(data=chats, many=True)
-        serializer.is_valid()
+        serializer = ChatSerializer(instance=chats, many=True)
+        # serializer.is_valid()
         return Response({'chats': serializer.data})
 
 
 class GetPatientChatsAPI(APIView):
     def get(self, request):
-        patient = Patient.objects.get(user__user_id=request.data.get('user_id'))
-        chats = ChatStorage.objects.filter(patient=patient)
+        user_id = request.data.get('user_id')
+        # patient = Patient.objects.get(user__user_id=request.data.get('user_id'))
+        chats = ChatStorage.objects.filter(patient__user__user_id=user_id, patient__confirance_status='wait')
         serializer = PatientChatSerializer(instance=chats, many=True)
         return Response({'chats': serializer.data})
 
