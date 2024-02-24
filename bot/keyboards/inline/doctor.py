@@ -53,12 +53,16 @@ async def manage_chat_doctor(status, chat):
         {"doctor": {"id": chat['patient']['doctor']['id'], "name": chat['patient']['doctor']['full_name']},
          "patient": {"id": chat['patient']['id'], "name": chat['patient']['full_name']}, "type": 'doctor'}
     )
+    hash_data2 = create_hash(
+        {"doctor": chat['patient']['doctor']['id'],
+         "patient": chat['patient']['id']}
+    )
     # simple chat btn
     webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{chat['chat_code']}/{hash_data}"
     webapp_main = WebAppInfo(url=webapp_url)
     web_app = InlineKeyboardButton(text=f"💬 Открыть Чат", web_app=webapp_main)
     # video chat btn
-    webapp_url_room = f"{env.str('UI_DOMEN')}/meeting/{chat['meeting_root']}/{hash_data}"
+    webapp_url_room = f"{env.str('UI_DOMEN')}/meeting/{chat['meeting_root']}/{hash_data2}"
     webapp_main_r = WebAppInfo(url=webapp_url_room)
     w_r = InlineKeyboardButton(text=f"📹 Открыть Видеочат", web_app=webapp_main_r)
     keyboard.row(web_app, w_r)

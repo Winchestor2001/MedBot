@@ -120,7 +120,7 @@ async def chats(call: types.CallbackQuery, state: FSMContext):
         text = f"🆔 {patient['chat'][0]['id']}\n" \
                f"👨‍⚕️Доктор: {patient['chat'][0]['patient']['doctor']['full_name']}\n" \
                f"👤 Пациент: {patient['chat'][0]['patient']['full_name']}\n" \
-               f"📅 Дата: {date}\n"
+               f"📅 Дата регистрации: {date}\n"
         status = patient["chat"][0]['patient']["confirance_status"]
         await state.update_data(chat_code=patient["chat"][0]["chat_code"])
         btn = await manage_chat_doctor(status, patient["chat"][0])
