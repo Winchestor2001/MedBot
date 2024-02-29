@@ -53,7 +53,7 @@ class Patient(models.Model):
     phone_number = models.CharField(max_length=255)
     additional_information = models.TextField(null=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
-    confirance_date = models.DateField(default=None)
+    confirance_date = models.DateField(default=None,  blank=True, null=True)
     confirance_time = models.CharField(max_length=50, blank=True, null=True)
     confirance_status = models.CharField(max_length=20, choices=CONFIRANCE_STASTUS, default='wait')
 
