@@ -477,3 +477,9 @@ class DoctorStopChatAPIView(APIView):
         patient.confirance_status = 'close'
         patient.save()
         return Response("OK")
+
+
+class DoctorStopCallAPIView(APIView):
+    def post(self, request):
+        room_name = request.data.get("room_name")
+        return Response("OK")

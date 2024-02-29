@@ -127,3 +127,8 @@ class PatientPayment(models.Model):
     def __str__(self):
         return f"{self.patient} - {self.doctor}"
 
+
+class CallNotification(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    message_id = models.BigIntegerField()
+

@@ -55,7 +55,7 @@ async def manage_chat_doctor(status, chat):
     )
     hash_data2 = create_hash(
         {"doctor": chat['patient']['doctor']['id'],
-         "patient": chat['patient']['id']}
+         "patient": chat['patient']['id'], "type": 'doctor'}
     )
     # simple chat btn
     webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{chat['chat_code']}/{hash_data}"

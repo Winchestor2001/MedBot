@@ -28,4 +28,5 @@ urlpatterns = [
     path('doctor_about/', AboutDoctorAPI.as_view()),
     path('chat_history/<str:chat_code>/', GetChatHistoryAPI.as_view()),
     path('stop_chat/', DoctorStopChatAPIView.as_view()),
+    path('stop_call/', DoctorStopCallAPIView.as_view()),
 ]
