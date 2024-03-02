@@ -5,7 +5,7 @@ from keyboards.inline.doctor import *
 from connection.api_connection import *
 from states.Admin import Payment
 
-from bot.connection.api_connection import stop_chat
+from connection.api_connection import stop_chat
 
 data_methods = {
         "qiwi": "Введите Qiwi тел.номер",
