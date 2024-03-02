@@ -16,6 +16,7 @@ import secrets
 from bot.data.config import BOT_TOKEN
 import subprocess
 import os
+from core.settings import PAYMENT_DOMAIN
 from uuid import uuid4
 
 
@@ -240,7 +241,7 @@ def create_pdf(data, output_path):
 
 
 def withdraw(my_id, method, amount: int, wallet):
-    url = 'https://aaio.so/api/create-payoff'
+    url = f'{PAYMENT_DOMAIN}/api/create-payoff'
     api_key = env.str("PAYMENT_API_KEY")  # Ключ API из раздела https://aaio.io/cabinet/api
     commission_type = 0  # Тип комиссии
 

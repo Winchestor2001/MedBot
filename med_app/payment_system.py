@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from uuid import uuid4
 
 import requests
-from core.settings import PAYMENT_MERCHANT_ID, PAYMENT_API_KEY, PAYMENT_SECRET_KEY
+from core.settings import PAYMENT_MERCHANT_ID, PAYMENT_API_KEY, PAYMENT_SECRET_KEY, PAYMENT_DOMAIN
 
 
 def create_invoice(amount: str):
@@ -27,11 +27,11 @@ def create_invoice(amount: str):
         'desc': "Telecure BOT",
         'lang': lang
     }
-    return "https://aaio.io/merchant/pay?" + urlencode(params), order_id
+    return f"{PAYMENT_DOMAIN}/merchant/pay?" + urlencode(params), order_id
 
 
 def check_invoice(bill_id: str):
-    url = 'https://aaio.io/api/info-pay'
+    url = f'{PAYMENT_DOMAIN}/api/info-pay'
     params = {
         'merchant_id': PAYMENT_MERCHANT_ID,
         'order_id': bill_id
