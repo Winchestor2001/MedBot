@@ -488,11 +488,12 @@ class DoctorStopCallAPIView(APIView):
     def post(self, request):
         room_name = request.data.get("room_name")
         room = MeetingRoom.objects.get(meet_code=room_name)
-        patient = CallNotification.objects.get(room_name=room_name)
-        edit_telegram_chat_message(
-            user_id=patient.patient.user.user_id,
-            message_id=patient.message_id,
-            doctor=room.doctor.full_name
-        )
-        patient.delete()
+        patient = CallNotification.objects.filter(room_name=room_name)
+        for item in patient:
+            edit_telegram_chat_message(
+                user_id=item.patient.user.user_id,
+                message_id=item.message_id,
+                doctor=room.doctor.full_name
+            )
+            item.delete()
         return Response("OK")
