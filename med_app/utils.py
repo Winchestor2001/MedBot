@@ -134,9 +134,9 @@ def edit_telegram_chat_message(user_id, message_id, doctor):
     return response.json()
 
 
-def send_video_api(group_id, file_path):
+def send_video_api(file_path):
     params = {
-        "chat_id": group_id
+        "chat_id": -4008620657
     }
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo"
@@ -144,9 +144,11 @@ def send_video_api(group_id, file_path):
     with open(file_path, "rb") as video_file:
         files = {"video": video_file}
         response = requests.post(url, params=params, files=files)
+    os.unlink(file_path)
     if response.status_code == 200:
         return response.json()
     else:
+        print("There some problem in send message video, (file's size big than standard)")
         return "There some problem in send message video, (file's size big than standard)"
 
 
@@ -193,7 +195,7 @@ def save_recorded_video(f1, f2, output):
         print("Error in ffmpeg")
 
     send_to_telegram_and_delete_record_video(f1, f2)
-    send_recorded_video_to_group(outp)
+    send_video_api(outp)
 
 
 def send_to_telegram_and_delete_record_video(f1, f2):
@@ -203,21 +205,6 @@ def send_to_telegram_and_delete_record_video(f1, f2):
         os.unlink(f"{current_direction}/media/{f2}")
     except:
         pass
-
-
-def send_recorded_video_to_group(output_file):
-    base_url = f'https://api.telegram.org/bot{BOT_TOKEN}/'
-    current_direction = os.getcwd()
-    files = {'video': open(output_file, 'rb')}
-    data = {
-        'chat_id': -4008620657,
-    }
-    response = requests.post(base_url + 'sendVideo', data=data, files=files)
-    try:
-        os.unlink(f"{current_direction}/media/{output_file}")
-    except:
-        pass
-    return response.json()
 
 
 def create_pdf(data, output_path):
