@@ -60,3 +60,9 @@ class PatientPaymentAdmin(admin.ModelAdmin):
 class ChatMessageAdmin(admin.ModelAdmin):
     list_display = ["sender", "receiver", "created_at"]
 
+
+@admin.register(CallNotification)
+class CallNotificationAdmin(admin.ModelAdmin):
+    list_display = ["patient", "message_id"]
+
+

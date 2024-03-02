@@ -106,7 +106,7 @@ def send_message_with_web_app(user_id, url, message):
     web = WebAppInfo(url=f"{url}")
     inline_keyboard = {
         'inline_keyboard': [
-            [{'text': 'Go', 'web_app': web.__dict__['_values']}]
+            [{'text': 'Ответить', 'web_app': web.__dict__['_values']}]
         ]
     }
     inline_keyboard_json = json.dumps(inline_keyboard)
@@ -116,6 +116,19 @@ def send_message_with_web_app(user_id, url, message):
             'chat_id': user_id,
             'text': message,
             'reply_markup': inline_keyboard_json
+        }
+    )
+    return response.json()
+
+
+def edit_telegram_chat_message(user_id, message_id, doctor):
+    base_url = f'https://api.telegram.org/bot{BOT_TOKEN}/'
+    response = requests.post(
+        base_url + 'editMessageText',
+        json={
+            'chat_id': user_id,
+            'message_id': message_id,
+            'text': f'Вам звонил доктор: {doctor}'
         }
     )
     return response.json()

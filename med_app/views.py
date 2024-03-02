@@ -17,7 +17,7 @@ from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 from bot.data.config import BOT_TOKEN
 from .utils import check_dates, filter_doctor_direction, send_message, modify_date_type, generate_room_code, \
-    create_hash, send_message_with_web_app, create_pdf, save_recorded_video, withdraw
+    create_hash, send_message_with_web_app, create_pdf, save_recorded_video, withdraw, edit_telegram_chat_message
 from .yasg_schame import doctor_get_schame, patient_get_param, doctor_post_schame, patient_post_param, \
     doctor_times_get_param, doctor_times_get_schame, patient_result_post_param, doctor_get_param, \
     single_patient_get_param, doctor_call_post_param, doctor_rating_post_param, doctor_rating_post_param2
@@ -261,18 +261,23 @@ class DoctorCallAPIView(APIView):
     def post(self, request):
         doctor = request.data["doctor_id"]
         patient = request.data["patient_id"]
-        data_type = request.data["type"]
+        # data_type = request.data["type"]
         meet = MeetingRoom.objects.get(patient__id=patient)
         hash_data = create_hash(
-            {"doctor": doctor, "patient": patient, "type": data_type}
+            {"doctor": doctor, "patient": patient, "type": 'patient'}
             # {"doctor": {"id": meet.doctor.id, "name": meet.doctor.full_name},
             #  "patient": {"id": meet.patient.id, "name": meet.patient.full_name}, "type": data_type}
         )
         webapp_url = f"{env.str('UI_DOMEN')}/meeting/{meet.meet_code}/{hash_data}"
-        send_message_with_web_app(
+        response_data = send_message_with_web_app(
             user_id=meet.patient.user.user_id,
             url=webapp_url,
-            message="Soon meet start",
+            message=f"Вам звонит доктор: {meet.doctor.full_name}",
+        )
+        CallNotification.objects.create(
+            patient=meet.patient,
+            room_name = meet.meet_code,
+            message_id=response_data['result']['message_id']
         )
 
         return Response({"Call": "wait"})
@@ -295,7 +300,7 @@ class ChatAPIView(APIView):
         send_message_with_web_app(
             user_id=meet.patient.user.user_id,
             url=webapp_url,
-            message="Soon meet start",
+            message=f"Уведомление в чате",
         )
 
         return Response({"Call": "wait"})
@@ -482,4 +487,12 @@ class DoctorStopChatAPIView(APIView):
 class DoctorStopCallAPIView(APIView):
     def post(self, request):
         room_name = request.data.get("room_name")
+        room = MeetingRoom.objects.get(meet_code=room_name)
+        patient = CallNotification.objects.get(room_name=room_name)
+        edit_telegram_chat_message(
+            user_id=patient.patient.user.user_id,
+            message_id=patient.message_id,
+            doctor=room.doctor.full_name
+        )
+        patient.delete()
         return Response("OK")

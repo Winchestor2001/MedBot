@@ -130,5 +130,8 @@ class PatientPayment(models.Model):
 
 class CallNotification(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    room_name = models.CharField(max_length=100, blank=True, null=True)
     message_id = models.BigIntegerField()
 
+    def __str__(self):
+        return f"{self.patient}"
