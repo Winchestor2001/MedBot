@@ -27,6 +27,7 @@ import os
 from mimetypes import guess_type
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +71,11 @@ class DoctorApiView(APIView):
         responses={200: doctor_post_schame}
     )
     def get(self, request):
-        data = Doctor.objects.all()
+        patient = Patient.objects.filter(user__user_id=request.GET['user_id'], confirance_status='wait')
+        if patient.exists():
+            data = Doctor.objects.all()
+        else:
+            data = Doctor.objects.filter(~Q(id=patient.doctor.id))
         directions = filter_doctor_direction(data)
         return Response({"doctors": DoctorSerializer(data, many=True).data, "directions": directions})
 
@@ -166,13 +171,6 @@ class PatientApiView(APIView):
         get_doctor = new_patient.doctor
         # date = modify_date_type(str(data["confirance_date"]))
         # f"📆 Дата и время: {date}\n\n" \
-        msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
-              f"📋 Заказ ID: {data['id']}\n" \
-              f"👨‍⚕️ Доктор: {get_doctor}\n\n" \
-              f"Спасибо, что выбрали наш сервис! Если у вас есть какие-либо вопросы или вам нужно перенести встречу, " \
-              f"свяжитесь с нами. 📞"
-        user_id = int(request.data["user"])
-        send_message(BOT_TOKEN, user_id, msg)
         pay_url, bill_id = create_invoice(str(new_patient.doctor.price))
 
         PatientPayment.objects.create(
@@ -411,6 +409,14 @@ class PaymentNotification(APIView):
         )
         patient_payment.paid = True
         patient_payment.save()
+
+        msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
+              f"📋 Заказ ID: {patient_payment.patient.id}\n" \
+              f"👨‍⚕️ Доктор: {patient_payment.doctor.full_name}\n\n" \
+              f"Спасибо, что выбрали наш сервис! Если у вас есть какие-либо вопросы или вам нужно перенести встречу, " \
+              f"свяжитесь с нами. 📞"
+        user_id = int(request.data["user"])
+        send_message(BOT_TOKEN, user_id, msg)
 
         return Response({"status": "received"}, status=200)
 
