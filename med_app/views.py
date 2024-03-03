@@ -160,12 +160,6 @@ class PatientApiView(APIView):
         )
         current_year = datetime.now(pytz.timezone('Asia/Tashkent')).year
         # formatted_datetime = formatted_datetime.replace(year=current_year)
-        MeetingRoom.objects.create(
-            patient=new_patient,
-            doctor=new_patient.doctor,
-            # start_meet_date=formatted_datetime,
-            meet_code=generate_room_code()
-        )
 
         data = model_to_dict(new_patient)
         get_doctor = new_patient.doctor
@@ -385,6 +379,12 @@ class PaymentNotification(APIView):
             doctor=patient_payment.doctor,
             patient=patient_payment.patient,
             chat_code=generate_room_code()
+        )
+        MeetingRoom.objects.create(
+            patient=patient_payment.patient,
+            doctor=patient_payment.doctor,
+            # start_meet_date=formatted_datetime,
+            meet_code=generate_room_code()
         )
         hash_data = create_hash(
             {"doctor": {"id": patient_payment.doctor.id, "name": patient_payment.doctor.full_name},
