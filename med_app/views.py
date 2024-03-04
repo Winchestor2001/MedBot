@@ -373,6 +373,7 @@ class VideoStreamPatientView(View):
 
 class PaymentNotification(APIView):
     def post(self, request):
+        print(request.data)
         order_id = request.data['order_id']
         patient_payment = PatientPayment.objects.get(bill_id=order_id)
         chat = ChatStorage.objects.create(
