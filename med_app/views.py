@@ -73,7 +73,7 @@ class DoctorApiView(APIView):
     def get(self, request):
         patient = Patient.objects.filter(user__user_id=request.GET['user_id'], confirance_status='wait')
         if patient.exists():
-            data = Doctor.objects.filter(~Q(id=patient.doctor.id))
+            data = Doctor.objects.filter(~Q(id=patient.first().doctor.id))
         else:
             data = Doctor.objects.all()
         directions = filter_doctor_direction(data)
