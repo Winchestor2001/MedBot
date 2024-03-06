@@ -122,6 +122,18 @@ def send_message_with_web_app(user_id, url, message):
     return response.json()
 
 
+def send_message_chat_notification(user_id, message):
+    base_url = f'https://api.telegram.org/bot{BOT_TOKEN}/'
+    response = requests.post(
+        base_url + 'sendMessage',
+        json={
+            'chat_id': user_id,
+            'text': message
+        }
+    )
+    return response.json()
+
+
 def edit_telegram_chat_message(user_id, message_id, doctor):
     base_url = f'https://api.telegram.org/bot{BOT_TOKEN}/'
     response = requests.post(

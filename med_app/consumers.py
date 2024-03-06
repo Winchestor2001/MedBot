@@ -9,7 +9,7 @@ from django.conf import settings
 
 from med_app.models import ChatStorage, Patient, Doctor, ChatMessage
 from med_app.serializers import ChatPatientSerializer, ChatDoctorSerializer
-from med_app.utils import save_recorded_video
+from med_app.utils import save_recorded_video, send_message_with_web_app, send_message_chat_notification
 from django.core.files.base import ContentFile
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -167,6 +167,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type": text_data_json['type']
         }
 
+        send_message_chat_notification(
+            user_id=receiver.data['user']['user_id'],
+            message=f'В чате {sender.data["full_name"]} новое сообщение!'
+        )
         return socket_data
 
 
