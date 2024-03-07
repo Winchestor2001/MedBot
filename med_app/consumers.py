@@ -166,9 +166,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "image_bytes": ch.image.url if ch.image else None,
             "type": text_data_json['type']
         }
-
         send_message_chat_notification(
-            user_id=receiver.data['user']['user_id'],
+            user_id=receiver.data['user'],
             message=f'В чате {sender.data["full_name"]} новое сообщение!'
         )
         return socket_data
