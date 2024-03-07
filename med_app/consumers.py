@@ -9,9 +9,13 @@ from django.conf import settings
 
 from med_app.models import ChatStorage, Patient, Doctor, ChatMessage
 from med_app.serializers import ChatPatientSerializer, ChatDoctorSerializer
-from med_app.utils import save_recorded_video, send_message_with_web_app, send_message_chat_notification
+from med_app.utils import save_recorded_video, send_message_with_web_app, create_hash
 from django.core.files.base import ContentFile
 from storages.backends.s3boto3 import S3Boto3Storage
+from environs import Env
+
+env = Env()
+env.read_env()
 
 
 class VideoConsumer1(AsyncWebsocketConsumer):
@@ -166,8 +170,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "image_bytes": ch.image.url if ch.image else None,
             "type": text_data_json['type']
         }
-        send_message_chat_notification(
+        if text_data_json['type'] == 'doctor':
+            hash_data = create_hash(
+                {"doctor": {"id": sender.data['id'], "name": sender.data['full_name']},
+                 "patient": {"id": receiver.data['id'], "name": receiver.data['full_name']},
+                 "type": 'patient'}
+            )
+        else:
+            hash_data = create_hash(
+                {"doctor": {"id": receiver.data['id'], "name": receiver.data['full_name']},
+                 "patient": {"id": sender.data['id'], "name": sender.data['full_name']},
+                 "type": 'doctor'}
+            )
+
+        webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{self.room_name}/{hash_data}"
+        send_message_with_web_app(
             user_id=receiver.data['user'],
+            url=webapp_url,
             message=f'В чате {sender.data["full_name"]} новое сообщение!'
         )
         return socket_data
