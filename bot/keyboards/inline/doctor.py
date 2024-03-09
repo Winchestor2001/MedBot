@@ -39,7 +39,7 @@ async def get_patient_chats_btn(data):
         btn = InlineKeyboardButton(text=f"{i['patient']['full_name']} - 👨‍⚕️{i['doctor']['full_name']}",
                                    callback_data=f"single_patient_chat:{i['id']}")
         keyboard.insert(btn)
-    back = InlineKeyboardButton("🔙 Назад", callback_data="single_patient_chat:cancel")
+    back = InlineKeyboardButton("🔙 Назад", callback_data="single_patient_chat:cancel_list")
     keyboard.row(back)
     return keyboard
 
@@ -81,7 +81,7 @@ async def manage_patient_chat(chat):
     )
     webapp_url = f"{env.str('UI_DOMEN')}/meeting_chat/{chat['chat_code']}/{hash_data}"
     webapp_main = WebAppInfo(url=webapp_url)
-    web_app = InlineKeyboardButton(text=f"💬 Открыть", web_app=webapp_main)
+    web_app = InlineKeyboardButton(text=f"💬 Открыть Чат", web_app=webapp_main)
     keyboard.row(web_app)
     keyboard.add(back)
     return keyboard

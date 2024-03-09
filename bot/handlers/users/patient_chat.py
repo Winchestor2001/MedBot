@@ -13,15 +13,15 @@ async def chat_patient(call: types.CallbackQuery):
         chats = await get_patient_chats(call.from_user.id)
         if chats:
             btn = await get_patient_chats_btn(chats)
-            await call.message.edit_text("💬 Чаты", reply_markup=btn)
+            await call.message.edit_text("📋 Записи", reply_markup=btn)
         else:
-            await call.answer("У Вас нет Чаты", show_alert=True)
+            await call.answer("У Вас нет Записи", show_alert=True)
 
 
 async def s_chat(call: types.CallbackQuery):
     await call.answer()
     data = call.data.split(":")[1]
-    if not data == "cancel":
+    if not data == "cancel" and not data == "cancel_list":
         patient = await get_single_chat(data)
         if patient:
             d = patient['chat'][0]['created_at'][:10]
@@ -32,9 +32,16 @@ async def s_chat(call: types.CallbackQuery):
                    f"📅 Дата: {date}\n"
             btn = await manage_patient_chat(patient["chat"][0])
             await call.message.edit_text(text, reply_markup=btn)
-    else:
+    elif data == "cancel_list":
         msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
-        await call.message.answer(msg, reply_markup=main_keyboard)
+        await call.message.edit_text(msg, reply_markup=main_keyboard)
+    else:
+        chats = await get_patient_chats(call.from_user.id)
+        if chats:
+            btn = await get_patient_chats_btn(chats)
+            await call.message.edit_text("📋 Записи", reply_markup=btn)
+        else:
+            await call.answer("У Вас нет Записи", show_alert=True)
 
 
 def register_chat_patient_handlers_py(dp: Dispatcher):
