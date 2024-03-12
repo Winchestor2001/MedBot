@@ -48,7 +48,7 @@ async def doctor_intro(call: types.CallbackQuery):
     elif data == "get_money":
         methods = await get_payment_methods()
         btn = await payment_method_btn(methods)
-        await call.message.edit_text("Choose payment method", reply_markup=btn)
+        await call.message.edit_text("Выберите способ оплаты 👇", reply_markup=btn)
 
     elif data == "cancel":
         btn = await basic()
@@ -66,10 +66,16 @@ async def payment(call: types.CallbackQuery, state: FSMContext):
 
     if data_methods.get(method, False):
         cancel = await cancel_btn()
-        await call.message.edit_text(data_methods[method], reply_markup=cancel)
+        all_methods = await get_payment_methods()
+        await call.message.edit_text(f"<b>{data_methods[method]}</b>\n"
+                                     f"<em>Мин сумма: {all_methods['list'][method]['min']}</em>\n"
+                                     f"<em>Макс сумма: {all_methods['list'][method]['max']}</em>\n"
+                                     f"<em>Комиссия: {all_methods['list'][method]['commission_percent']}</em>%",
+                                     reply_markup=cancel)
         await Payment.text.set()
         await state.update_data({
-            "method": method
+            "method": method,
+            "commission": all_methods['list'][method]['commission_percent']
         })
 
 
@@ -90,12 +96,16 @@ async def get_payment_price(message: types.Message, state: FSMContext):
     data = await state.get_data()
     method = data["method"]
     account = data["account"]
-    price = data["price"]
-    # print(method, account, price)
-    d = await withdraw_doctor(method, account, price, message.from_user.id)
-    # print(d)
-    await message.answer("✅ Ваш запрос принят, оплата за ваш аккаунт произойдет как можно скорее.")
+    price = int(data["price"])
+    commission = int(data["commission"])
+    doctor_info = await get_doctor_info(message.from_user.id)
+    balance = doctor_info["doctors"]["balance"]
     msg = f"Добро пожаловать 👋, {message.from_user.full_name}!"
+    if int(balance) <= int(price+price/100*commission):
+        await message.answer("❌ Недостаточно вашего баланса")
+    else:
+        withdraw_info = await withdraw_doctor(method, account, price, message.from_user.id)
+        await message.answer("✅ Ваш запрос принят, оплата за ваш аккаунт произойдет как можно скорее.")
     btn = await basic()
     await message.answer(msg + f"\nТы доктор.", reply_markup=btn)
     await state.finish()
