@@ -272,3 +272,4 @@ PAYMENT_SECRET_KEY = env.str('PAYMENT_SECRET_KEY')
 PAYMENT_API_KEY = env.str('PAYMENT_API_KEY')
 PAYMENT_DOMAIN = env.str('PAYMENT_DOMAIN')
 
+LOGIN_URL = 'admin/login/?next=/stat/'
