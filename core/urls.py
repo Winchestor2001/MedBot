@@ -9,6 +9,7 @@ from .yasg import urlpatterns as yasg_urlpatterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include("med_app.urls")),
+    path('stat/', include("telecure_stat.urls")),
 
     path('ckeditor/', include('ckeditor_uploader.urls')),
 

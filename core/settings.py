@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
 
     'med_app',
+    'telecure_stat',
     'rest_framework',
     'celery',
     'channels',
@@ -62,7 +63,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,24 +83,25 @@ ASGI_APPLICATION = 'core.asgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # sqlite3
-#DATABASES = {
-#  'default': {
-#       'ENGINE': 'django.db.backends.sqlite3',
-#       'NAME': BASE_DIR / 'db.sqlite3',
-#   }
-#}
-
-# postgresql
-DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': env.str("DB_NAME"),
-            'USER': env.str("DB_USER"),
-            'PASSWORD': env.str("DB_PASSWORD"),
-            'HOST': env.str("DB_HOST"),
-            'PORT': env.int("DB_PORT"),
-        }
-}
+if DEBUG:
+    DATABASES = {
+     'default': {
+          'ENGINE': 'django.db.backends.sqlite3',
+          'NAME': BASE_DIR / 'db.sqlite3',
+      }
+    }
+else:
+    # postgresql
+    DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                'NAME': env.str("DB_NAME"),
+                'USER': env.str("DB_USER"),
+                'PASSWORD': env.str("DB_PASSWORD"),
+                'HOST': env.str("DB_HOST"),
+                'PORT': env.int("DB_PORT"),
+            }
+    }
 
 CHANNEL_LAYERS = {
     'default': {

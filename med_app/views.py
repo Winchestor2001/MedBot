@@ -504,3 +504,5 @@ class DoctorStopCallAPIView(APIView):
             )
             item.delete()
         return Response("OK")
+
+

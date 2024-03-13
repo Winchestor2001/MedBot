@@ -14,9 +14,10 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Doctor)
 class DoctorAdmin(admin.ModelAdmin):
-    list_display = ["user", "full_name"]
+    list_display = ["user", "full_name", "balance"]
     list_display_links = ["user", "full_name"]
     readonly_fields = ['activate_url']
+    search_fields = ['full_name']
 
     inlines = [DateInline]
 
