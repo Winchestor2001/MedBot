@@ -127,11 +127,13 @@ async def chats(call: types.CallbackQuery, state: FSMContext):
     if patient:
         d = patient['chat'][0]['created_at'][:10]
         date = await change_format_date(d)
+        status = patient["chat"][0]['patient']["confirance_status"]
+        sts_text = "Процесс" if status == "wait" else "Закрыто"
         text = f"🆔 {patient['chat'][0]['id']}\n" \
                f"👨‍⚕️Доктор: {patient['chat'][0]['patient']['doctor']['full_name']}\n" \
                f"👤 Пациент: {patient['chat'][0]['patient']['full_name']}\n" \
-               f"📅 Дата регистрации: {date}\n"
-        status = patient["chat"][0]['patient']["confirance_status"]
+               f"📅 Дата регистрации: {date}\n" \
+               f"📊 Статус: {sts_text}"
         await state.update_data(chat_code=patient["chat"][0]["chat_code"])
         btn = await manage_chat_doctor(status, patient["chat"][0])
         await call.message.edit_text(text, reply_markup=btn)
