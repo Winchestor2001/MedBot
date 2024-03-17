@@ -39,12 +39,12 @@ class DoctorSerializer(ModelSerializer):
     def count_doctor_rating(obj):
         ratings = DoctorRating.objects.filter(doctor=obj)
         result = count_ratings(ratings)
-        return result
+        return result, len(ratings)
 
     def to_representation(self, instance):
         redata = super().to_representation(instance)
         redata['date'] = [item['time_interval'] for item in self.get_doctor_date(instance)]
-        redata['rating'] = self.count_doctor_rating(instance)
+        redata['rating'], redata['voted_patients'] = self.count_doctor_rating(instance)
         redata['price'] = instance.price + instance.profit
         redata['balance'] = (instance.balance / redata['price']) * instance.price
         return redata
