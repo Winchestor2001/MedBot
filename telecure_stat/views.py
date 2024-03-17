@@ -11,6 +11,11 @@ def home_page(request):
     total_patients = Patient.objects.all().count()
     doctors_earn = Doctor.objects.all().aggregate(total_balance=Sum('balance'))
     total_balance = doctors_earn['total_balance'] if doctors_earn['total_balance'] else 0
+    profit = 0
+    for doctor in Doctor.objects.all():
+        patients = Patient.objects.filter(doctor=doctor).count()
+        profit += doctor.profit * patients
+
     doctors = Doctor.objects.all().order_by('-balance')
 
     context = {
@@ -19,6 +24,7 @@ def home_page(request):
         "total_patients": total_patients,
         "total_doctor_balance": total_balance,
         "doctors": doctors,
+        "profit": profit,
     }
 
     return render(request, 'index.html', context=context)

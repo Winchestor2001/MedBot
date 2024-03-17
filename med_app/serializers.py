@@ -25,7 +25,8 @@ class DoctorRatingSerializer(ModelSerializer):
 class DoctorSerializer(ModelSerializer):
     class Meta:
         model = Doctor
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['profit']
 
     @staticmethod
     def get_doctor_date(obj):
@@ -44,6 +45,8 @@ class DoctorSerializer(ModelSerializer):
         redata = super().to_representation(instance)
         redata['date'] = [item['time_interval'] for item in self.get_doctor_date(instance)]
         redata['rating'] = self.count_doctor_rating(instance)
+        redata['price'] = instance.price + instance.profit
+        redata['balance'] = (instance.balance / redata['price']) * instance.price
         return redata
 
 

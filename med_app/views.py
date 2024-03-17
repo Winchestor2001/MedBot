@@ -435,7 +435,7 @@ class GetPatientChatsAPI(APIView):
     def get(self, request):
         user_id = request.data.get('user_id')
         # patient = Patient.objects.get(user__user_id=request.data.get('user_id'))
-        chats = ChatStorage.objects.filter(patient__user__user_id=user_id, patient__confirance_status='wait')
+        chats = ChatStorage.objects.filter(patient__user__user_id=user_id)
         serializer = PatientChatSerializer(instance=chats, many=True)
         return Response({'chats': serializer.data})
 

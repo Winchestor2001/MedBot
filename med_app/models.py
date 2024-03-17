@@ -24,6 +24,7 @@ class Doctor(models.Model):
     price = models.FloatField(default=0)
     about = RichTextUploadingField(blank=True, null=True)
     balance = models.IntegerField(default=0)
+    profit = models.IntegerField(default=0)
     activate_url = models.CharField(max_length=100, default='null')
 
     def __str__(self):
