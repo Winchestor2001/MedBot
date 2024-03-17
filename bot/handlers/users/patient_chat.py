@@ -11,7 +11,7 @@ async def chat_patient(call: types.CallbackQuery):
     data = call.data.split(":")[1]
     if data == "chats":
         chats = await get_patient_chats(call.from_user.id)
-        if chats:
+        if chats["chats"]:
             btn = await get_patient_chats_btn(chats)
             await call.message.edit_text("📋 Записи", reply_markup=btn)
         else:
@@ -25,11 +25,14 @@ async def s_chat(call: types.CallbackQuery):
         patient = await get_single_chat(data)
         if patient:
             d = patient['chat'][0]['created_at'][:10]
+            sts = patient['chat'][0]['patient']['confirance_status']
+            status = "Процесс" if sts == "wait" else "Закрыто"
             date = await change_format_date(d)
             text = f"🆔 {patient['chat'][0]['id']}\n" \
                    f"👨‍⚕️Доктор: {patient['chat'][0]['patient']['doctor']['full_name']}\n" \
                    f"👤 Пациент: {patient['chat'][0]['patient']['full_name']}\n" \
-                   f"📅 Дата: {date}\n"
+                   f"📅 Дата: {date}\n" \
+                   f"📊 Статус: {status}"
             btn = await manage_patient_chat(patient["chat"][0])
             await call.message.edit_text(text, reply_markup=btn)
     elif data == "cancel_list":
