@@ -373,7 +373,6 @@ class VideoStreamPatientView(View):
 
 class PaymentNotification(APIView):
     def post(self, request):
-        print(request.data)
         order_id = request.data['order_id']
         patient_payment = PatientPayment.objects.get(bill_id=order_id)
         chat = ChatStorage.objects.create(
@@ -409,6 +408,7 @@ class PaymentNotification(APIView):
             message="Open chat",
         )
         patient_payment.paid = True
+        patient_payment.confirance_status = 'wait'
         patient_payment.save()
 
         msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \

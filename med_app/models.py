@@ -48,6 +48,7 @@ class Patient(models.Model):
     CONFIRANCE_STASTUS = (
         ('wait', 'wait'),
         ('close', 'close'),
+        ('in_payment', 'in_payment'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=500)
@@ -56,7 +57,7 @@ class Patient(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
     confirance_date = models.DateField(default=None,  blank=True, null=True)
     confirance_time = models.CharField(max_length=50, blank=True, null=True)
-    confirance_status = models.CharField(max_length=20, choices=CONFIRANCE_STASTUS, default='wait')
+    confirance_status = models.CharField(max_length=20, choices=CONFIRANCE_STASTUS, default='in_payment')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
