@@ -244,10 +244,10 @@ Dashboard
                                     <div class="table-responsive">
                                         <table class="table table-top-campaign">
                                             <tbody>
-                                                {% for doctor in doctors %}
+                                                {% for doctor in doctors|sort(reverse=true, attribute=lambda d: d.patient_set.all|length) %}
                                                 <tr>
                                                     <td>{{ forloop.counter }}. {{ doctor.full_name }}</td>
-                                                    <td>{{ doctor.patient_set.all.count }}</td>
+                                                    <td>{{ doctor.patient_set.all|length }}</td>
                                                 </tr>
                                                 {% endfor %}
 
