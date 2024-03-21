@@ -416,8 +416,11 @@ class PaymentNotification(APIView):
               f"👨‍⚕️ Доктор: {patient_payment.doctor.full_name}\n\n" \
               f"Спасибо, что выбрали наш сервис! Если у вас есть какие-либо вопросы или вам нужно перенести встречу, " \
               f"свяжитесь с нами. 📞"
-        user_id = int(request.data["user"])
-        send_message(BOT_TOKEN, user_id, msg)
+        msg_to_doctor = f"✨ {patient_payment.patient.full_name} успешно оплатил консультацию на сумму {patient_payment.doctor.price}₽. Ваш доход составил: {patient_payment.doctor.balance}₽."
+        patient_user_id = patient_payment.patient.user.user_id
+        doctor_user_id = patient_payment.patient.doctor.user.user_id
+        send_message(BOT_TOKEN, patient_user_id, msg)
+        send_message(BOT_TOKEN, doctor_user_id, msg_to_doctor)
 
         return Response({"status": "received"}, status=200)
 
