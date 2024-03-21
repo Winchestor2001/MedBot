@@ -400,15 +400,15 @@ class PaymentNotification(APIView):
         send_message_with_web_app(
             user_id=patient_payment.patient.user.user_id,
             url=webapp_url,
-            message="Open chat",
+            message="Открыть чат",
         )
         send_message_with_web_app(
             user_id=patient_payment.doctor.user.user_id,
             url=webapp_url2,
-            message="Open chat",
+            message="Открыть чат",
         )
         patient_payment.paid = True
-        patient_payment.confirance_status = 'wait'
+        patient_payment.patient.confirance_status = 'wait'
         patient_payment.save()
 
         msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
