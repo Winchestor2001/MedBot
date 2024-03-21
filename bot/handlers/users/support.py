@@ -15,7 +15,7 @@ async def support_text(call: types.CallbackQuery):
     admins = await get_admins_list()
     btn = await admin_keyboard(f"tg:user?id={admins['admins'][0]}")
     text = f"Вы обратились в службу поддержки клиентов. " \
-           f"Если у вас есть какие-либо вопросы, нажмите кнопку ниже"
+           f"Если у вас есть какие-либо вопросы, нажмите кнопку ниже 👇"
     await call.message.answer(text, reply_markup=btn)
 
 

@@ -12,7 +12,7 @@ async def send_request_result(call: types.CallbackQuery):
         btn = await get_results_btn(my_results)
         await call.message.edit_text("Ваши результаты:", reply_markup=btn)
     else:
-        await call.answer(text="У вас нет результат", show_alert=True)
+        await call.answer(text="❗️ У вас нет результат", show_alert=True)
 
 
 async def get_request_result(call: types.CallbackQuery):

@@ -409,6 +409,8 @@ class PaymentNotification(APIView):
         )
         patient_payment.paid = True
         patient_payment.patient.confirance_status = 'wait'
+        patient_payment.doctor.balance += patient_payment.doctor.price
+        patient_payment.doctor.save()
         patient_payment.save()
 
         msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
@@ -418,7 +420,7 @@ class PaymentNotification(APIView):
               f"свяжитесь с нами. 📞"
         msg_to_doctor = f"✨ {patient_payment.patient.full_name} успешно оплатил консультацию на сумму {patient_payment.doctor.price}₽. Ваш доход составил: {patient_payment.doctor.balance}₽."
         patient_user_id = patient_payment.patient.user.user_id
-        doctor_user_id = patient_payment.patient.doctor.user.user_id
+        doctor_user_id = patient_payment.doctor.user.user_id
         send_message(BOT_TOKEN, patient_user_id, msg)
         send_message(BOT_TOKEN, doctor_user_id, msg_to_doctor)
 
