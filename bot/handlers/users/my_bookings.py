@@ -17,7 +17,7 @@ async def profile(call: types.CallbackQuery, state: FSMContext):
             btn = await get_bookings_btn(booking)
             await call.message.edit_text("Ваши записи", reply_markup=btn)
         else:
-            await call.answer(text="У вас нет записей", show_alert=True)
+            await call.answer(text="❗️У вас нет записей", show_alert=True)
 
 
 async def detail_booking(call: types.CallbackQuery, state: FSMContext):
