@@ -8,21 +8,23 @@ from states.Admin import Payment
 from connection.api_connection import stop_chat
 
 data_methods = {
-        "qiwi": "Введите Qiwi тел.номер",
-        "yoomoney": "Введите Yoomoney тел.номер",
-        "payeer": "Введите Payeer номер",
-        "perfectmoney": "Введите Perfectmoney номер",
-        "cards_ru": "Введите номер карты",
-        "cards_ua": "Введите номер карты",
-        "bitcoin": "Введите номер кошелька",
-        "tether_trc20": "Введите номер кошелька",
-    }
+    "qiwi": "Введите Qiwi тел.номер",
+    "yoomoney": "Введите Yoomoney тел.номер",
+    "payeer": "Введите Payeer номер",
+    "perfectmoney": "Введите Perfectmoney номер",
+    "cards_ru": "Введите номер карты",
+    "cards_ua": "Введите номер карты",
+    "bitcoin": "Введите номер кошелька",
+    "tether_trc20": "Введите номер кошелька",
+}
 
 
 async def doctor_intro(call: types.CallbackQuery):
     # await call.answer()
     # await call.message.delete()
-    msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
+    msg = f"Здравствуйте👋, {call.from_user.full_name}!\n" \
+                 f"Мы рады видеть вас снова. Спасибо, что продолжаете с нами работать над улучшением " \
+                 f"здоровья и благополучия наших пациентов."
     data = call.data.split(":")[1]
     if data == "profile":
         d = await get_doctor_info(call.from_user.id)
@@ -44,6 +46,7 @@ async def doctor_intro(call: types.CallbackQuery):
             await call.answer("У Вас нет Пациенты", show_alert=True)
             btn = await basic()
             await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
+            # await welcomer_message(call.message)
 
     elif data == "get_money":
         methods = await get_payment_methods()
@@ -52,40 +55,45 @@ async def doctor_intro(call: types.CallbackQuery):
 
     elif data == "cancel":
         btn = await basic()
-        await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
+        await call.message.edit_text(msg, reply_markup=btn)
 
 
 async def payment(call: types.CallbackQuery, state: FSMContext):
     # await call.message.delete()
     await call.answer()
-    msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
+    msg = f"Здравствуйте👋, {call.from_user.full_name}!\n" \
+          f"Мы рады видеть вас снова. Спасибо, что продолжаете с нами работать над улучшением " \
+          f"здоровья и благополучия наших пациентов."
     method = call.data.split(":")[1]
     if method == "cancel":
         btn = await basic()
-        await call.message.edit_text(msg + f"\nТы доктор.", reply_markup=btn)
+        await call.message.edit_text(msg, reply_markup=btn)
 
     if data_methods.get(method, False):
         cancel = await cancel_btn()
-        all_methods = await get_payment_methods()
-        await call.message.edit_text(f"<b>{data_methods[method]}</b>\n"
-                                     f"<em>Мин сумма: {all_methods['list'][method]['min']}</em>\n"
-                                     f"<em>Макс сумма: {all_methods['list'][method]['max']}</em>\n"
-                                     f"<em>Комиссия: {all_methods['list'][method]['commission_percent']}</em>%",
-                                     reply_markup=cancel)
+        await call.message.edit_text(f"<b>{data_methods[method]}</b>\n", reply_markup=cancel)
         await Payment.text.set()
         await state.update_data({
             "method": method,
-            "commission": all_methods['list'][method]['commission_percent']
         })
 
 
 async def get_payment_account(message: types.Message, state: FSMContext):
     text = message.text.replace("+", "")
-    await state.update_data({
-        "account": text
-    })
+    data = await state.get_data()
+    method = data["method"]
+
+    all_methods = await get_payment_methods()
     cancel = await cancel_btn()
-    await message.answer("Введите сумму", reply_markup=cancel)
+    await message.answer(f"Введите сумму\n"
+                         f"<em>Мин сумма: {all_methods['list'][method]['min']}</em>\n"
+                         f"<em>Макс сумма: {all_methods['list'][method]['max']}</em>\n"
+                         f"<em>Комиссия: {all_methods['list'][method]['commission_percent']}</em>%",
+                         reply_markup=cancel)
+    await state.update_data({
+        "account": text,
+        "commission": all_methods['list'][method]['commission_percent']
+    })
     await Payment.price.set()
 
 
@@ -100,14 +108,16 @@ async def get_payment_price(message: types.Message, state: FSMContext):
     commission = int(data["commission"])
     doctor_info = await get_doctor_info(message.from_user.id)
     balance = doctor_info["doctors"]["balance"]
-    msg = f"Добро пожаловать 👋, {message.from_user.full_name}!"
-    if int(balance) <= int(price+price/100*commission):
+    msg = f"Здравствуйте👋, {message.from_user.full_name}!\n" \
+          f"Мы рады видеть вас снова. Спасибо, что продолжаете с нами работать над улучшением " \
+          f"здоровья и благополучия наших пациентов."
+    if int(balance) <= int(price + price / 100 * commission):
         await message.answer("❌ Недостаточно вашего баланса")
     else:
         withdraw_info = await withdraw_doctor(method, account, price, message.from_user.id)
         await message.answer("✅ Ваш запрос принят, оплата за ваш аккаунт произойдет как можно скорее.")
     btn = await basic()
-    await message.answer(msg + f"\nТы доктор.", reply_markup=btn)
+    await message.answer(msg, reply_markup=btn)
     await state.finish()
 
 
@@ -115,9 +125,11 @@ async def cancel_handler(call: types.CallbackQuery, state: FSMContext):
     await call.answer()
     await call.message.delete()
     await state.finish()
-    msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
+    msg = f"Здравствуйте👋, {call.from_user.full_name}!\n" \
+          f"Мы рады видеть вас снова. Спасибо, что продолжаете с нами работать над улучшением " \
+          f"здоровья и благополучия наших пациентов."
     btn = await basic()
-    await call.message.answer(msg + f"\nТы доктор.", reply_markup=btn)
+    await call.message.answer(msg, reply_markup=btn)
 
 
 async def chats(call: types.CallbackQuery, state: FSMContext):
@@ -158,7 +170,9 @@ async def manage_chats(call: types.CallbackQuery, state: FSMContext):
             await call.message.edit_text("✅ Остановлено")
         else:
             await call.message.edit_text("❌ Не Остановлено")
-        msg = f"Добро пожаловать 👋, {call.from_user.full_name}!"
+        msg = f"Здравствуйте👋, {call.from_user.full_name}!\n" \
+              f"Мы рады видеть вас снова. Спасибо, что продолжаете с нами работать над улучшением " \
+              f"здоровья и благополучия наших пациентов."
         await call.message.answer(msg, reply_markup=btn)
 
 
