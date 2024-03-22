@@ -19,20 +19,22 @@ async def bot_start(message: types.Message, state: FSMContext):
         username=username
     )
     args = message.get_args()
-    msg = f"Добро пожаловать 👋, {message.from_user.full_name}!"
+    msg = f"Здравствуйте👋, {message.from_user.full_name}!\n" \
+          f"Мы рады видеть вас снова. Спасибо, что продолжаете с нами работать над улучшением " \
+          f"здоровья и благополучия наших пациентов."
     if user == "REQUEST ERROR":
         logging.info("There are some problem in add user")
     else:
         if args:
             await update_doctor(user_id=user_id, username=username, activate_code=args)
             btn = await basic()
-            await message.answer(msg + f"\nТы доктор.", reply_markup=btn)
+            await message.answer(msg, reply_markup=btn)
         elif not user["user"]["is_doctor"]:
             await message.answer(msg, reply_markup=main_keyboard)
         else:
             # if is_doctor is true, inline keyboards don't show for user
             btn = await basic()
-            await message.answer(msg + f"\nТы доктор.", reply_markup=btn)
+            await message.answer(msg, reply_markup=btn)
 
 
 async def bot_help(message: types.Message, state: FSMContext):
