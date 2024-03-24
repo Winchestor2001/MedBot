@@ -380,6 +380,14 @@ class PaymentNotification(APIView):
             patient=patient_payment.patient,
             chat_code=generate_room_code()
         )
+        ChatMessage.objects.create(
+            chat=chat,
+            sender=chat.doctor.pk,
+            receiver=chat.patient.pk,
+            message="Пока консультация не началась вы можете рассказать, о чем хотели бы поговорить.",
+            type="doctor"
+
+        )
         MeetingRoom.objects.create(
             patient=patient_payment.patient,
             doctor=patient_payment.doctor,
