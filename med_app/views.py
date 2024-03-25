@@ -394,6 +394,13 @@ class PaymentNotification(APIView):
             # start_meet_date=formatted_datetime,
             meet_code=generate_room_code()
         )
+
+        patient_payment.paid = True
+        patient_payment.patient.confirance_status = 'wait'
+        patient_payment.doctor.balance += patient_payment.doctor.price
+        patient_payment.doctor.save()
+        patient_payment.save()
+
         hash_data = create_hash(
             {"doctor": {"id": patient_payment.doctor.id, "name": patient_payment.doctor.full_name},
              "patient": {"id": patient_payment.patient.id, "name": patient_payment.patient.full_name},
@@ -415,11 +422,6 @@ class PaymentNotification(APIView):
             url=webapp_url2,
             message="Открыть чат",
         )
-        patient_payment.paid = True
-        patient_payment.patient.confirance_status = 'wait'
-        patient_payment.doctor.balance += patient_payment.doctor.price
-        patient_payment.doctor.save()
-        patient_payment.save()
 
         msg = f"🎉 Поздравляем! Ваше бронирование подтверждено.🎉\n\n" \
               f"📋 Заказ ID: {patient_payment.patient.id}\n" \
